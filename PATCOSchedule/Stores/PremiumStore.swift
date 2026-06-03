@@ -43,8 +43,6 @@ final class PremiumStore {
         Task { await loadProducts() }
     }
 
-    deinit { updatesTask?.cancel() }
-
     /// Display price, e.g. "$1.99". Falls back to the prototype's price.
     var displayPrice: String {
         removeAdsProduct?.displayPrice ?? "$1.99"

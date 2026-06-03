@@ -44,7 +44,9 @@ final class AppState {
 
     /// Reverse origin and destination in place (swap button).
     func swapRoute() {
-        swap(&origin, &destination)
+        let previousOrigin = origin
+        origin = destination
+        destination = previousOrigin
     }
 
     /// Select a station for one end of the route.
