@@ -1,10 +1,5 @@
 import SwiftUI
 
-/// Schedule (home) tab — placeholder scaffold.
-///
-/// Renders the sticky header + a read-only route summary and a live count of
-/// upcoming trips, proving the AppState → ScheduleProvider → ClockTicker path
-/// is wired end-to-end. The full "Up Next" experience lands next phase.
 struct ScheduleView: View {
     @Environment(AppState.self) private var appState
     @Environment(ClockTicker.self) private var clock
@@ -20,38 +15,145 @@ struct ScheduleView: View {
     }
 
     var body: some View {
-        ScreenScaffold(title: "Schedule") {
-            Label("Saved", systemImage: "star")
-                .ptStyle(PTFont.rowLabel)
-                .foregroundStyle(PTColor.ink)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 7)
-                .background(Capsule().fill(PTColor.card))
-                .ptShadow(.card)
-        } content: {
-            routeSummary
-            ComingSoonNote(screen: "Up Next countdown, day stepper, and Later-today list")
-        }
-    }
-
-    private var routeSummary: some View {
-        PTCard(padding: 16) {
-            HStack(spacing: 14) {
-                RouteEndpointIndicator()
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(appState.origin.name).ptStyle(PTFont.rowLabel)
-                    Hairline(inset: 0)
-                    Text(appState.destination.name).ptStyle(PTFont.rowLabel)
+        @Bindable var appState = appState
+        ScrollView {
+            VStack(alignment: .leading, spacing: PTSpacing.cardGap) {
+                if let next = upcoming.first {
+                    UpNextCard(trip: next, now: clock.now)
+                } else {
+                    NoTripsCard()
                 }
-                Spacer()
-                VStack {
-                    Text("\(upcoming.count)").ptStyle(PTFont.countdown)
-                        .foregroundStyle(PTColor.red)
-                    Text("upcoming").ptStyle(PTFont.overline)
-                        .foregroundStyle(PTColor.ink2)
+                if appState.alertVisible {
+                    AlertBanner { appState.alertVisible = false }
+                }
+                if upcoming.count > 1 {
+                    LaterTodayList(
+                        trips: Array(upcoming.dropFirst().prefix(5)),
+                        now: clock.now
+                    )
                 }
             }
+            .padding(.horizontal, PTSpacing.screenH)
+            .padding(.top, PTSpacing.cardGap)
+            .padding(.bottom, 96)
+        }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            ScheduleHeader()
+        }
+        .background(PTColor.bg)
+        .ignoresSafeArea(edges: .top)
+        .sheet(item: $appState.activeSheet) { sheet in
+            switch sheet {
+            case .stationPicker(let end):
+                StationPickerSheet(end: end)
+            default:
+                EmptyView()
+            }
+        }
+    }
+}
+
+// MARK: - Header
+
+private struct ScheduleHeader: View {
+    var body: some View {
+        VStack(spacing: 10) {
+            ScheduleTitleRow()
+            RouteSelectorCard()
+            DayStepper()
+        }
+        .padding(.horizontal, PTSpacing.screenH)
+        .padding(.top, PTSpacing.headerTop)
+        .padding(.bottom, 12)
+        .frame(maxWidth: .infinity)
+        .background(
+            PTColor.bg.opacity(0.86)
+                .background(.ultraThinMaterial)
+        )
+        .overlay(alignment: .bottom) {
+            Hairline(inset: 0)
+        }
+    }
+}
+
+private struct ScheduleTitleRow: View {
+    var body: some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text("Schedule")
+                .ptStyle(PTFont.screenTitle)
+                .foregroundStyle(PTColor.ink)
+            Spacer(minLength: 8)
+            // Saved button — wired in a later phase
+            HStack(spacing: 6) {
+                Image(systemName: "star.fill")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(PTColor.red)
+                Text("Saved")
+                    .ptStyle(PTFont.rowLabel)
+                    .foregroundStyle(PTColor.ink)
+            }
+            .padding(.horizontal, 13)
+            .padding(.vertical, 8)
+            .background(Capsule().fill(PTColor.card))
+            .ptShadow(.card)
+        }
+    }
+}
+
+// MARK: - Alert Banner
+
+private struct AlertBanner: View {
+    var onClose: () -> Void
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 11) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(PTColor.amber)
+                .padding(.top, 1)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Minor delays · Westmont")
+                    .font(PTFont.bold(14))
+                    .foregroundStyle(PTColor.alertTitle)
+                Text("The 1:33 is running about 3 min behind.")
+                    .font(PTFont.book(13))
+                    .foregroundStyle(PTColor.alertBody)
+            }
             .frame(maxWidth: .infinity, alignment: .leading)
+            Button(action: onClose) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(PTColor.amber)
+                    .padding(6)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(PTColor.amberSoft)
+        .clipShape(RoundedRectangle(cornerRadius: PTRadius.card, style: .continuous))
+    }
+}
+
+// MARK: - No Trips
+
+private struct NoTripsCard: View {
+    var body: some View {
+        PTCard(padding: 24) {
+            VStack(spacing: 10) {
+                Image(systemName: "moon.stars")
+                    .font(.system(size: 28))
+                    .foregroundStyle(PTColor.ink3)
+                Text("No more trains today")
+                    .font(PTFont.bold(16))
+                    .foregroundStyle(PTColor.ink)
+                Text("Service has ended for this route.\nTry another day or swap direction.")
+                    .font(PTFont.book(14))
+                    .foregroundStyle(PTColor.ink2)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity)
         }
     }
 }
