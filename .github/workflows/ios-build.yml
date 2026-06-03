@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 concurrency:
   group: ios-build-${{ github.ref }}
   cancel-in-progress: true
@@ -68,3 +71,20 @@ jobs:
           name: simulator-screenshot
           path: screenshot.png
           if-no-files-found: ignore
+
+      # Commit the screenshot back to the branch so it can be referenced in the
+      # PR description / docs. Guarded with [skip ci] so it doesn't loop.
+      - name: Commit screenshot to repo (branch builds only)
+        if: success() && startsWith(github.ref, 'refs/heads/claude/')
+        run: |
+          [ -f screenshot.png ] || { echo "no screenshot, skipping"; exit 0; }
+          mkdir -p docs/screenshots
+          cp screenshot.png docs/screenshots/home-tab.png
+          git config user.email "noreply@anthropic.com"
+          git config user.name "Claude"
+          git add docs/screenshots/home-tab.png
+          if git diff --cached --quiet; then
+            echo "screenshot unchanged, nothing to commit"; exit 0
+          fi
+          git commit -m "CI: update home-tab simulator screenshot [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
