@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PATCO — Home Flow</title>
+<style>
+  @font-face { font-family: 'CircularStd';        src: url('patco/fonts/CircularStd-Book.otf')   format('opentype'); font-weight: 400; }
+  @font-face { font-family: 'CircularStd-Book';   src: url('patco/fonts/CircularStd-Book.otf')   format('opentype'); }
+  @font-face { font-family: 'CircularStd-Medium'; src: url('patco/fonts/CircularStd-Medium.otf') format('opentype'); }
+  @font-face { font-family: 'CircularStd-Bold';   src: url('patco/fonts/CircularStd-Bold.otf')   format('opentype'); }
+  @font-face { font-family: 'CircularStd-Black';  src: url('patco/fonts/CircularStd-Black.otf')  format('opentype'); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: #E7E7EB; font-family: 'CircularStd', -apple-system, system-ui, sans-serif; color: #17171B; -webkit-font-smoothing: antialiased; }
+  @keyframes ptpulse { 0% { transform: scale(1); opacity: 0.55; } 70% { transform: scale(2.6); opacity: 0; } 100% { opacity: 0; } }
+  @keyframes ptSheetUp { from { transform: translateY(22px); } to { transform: translateY(0); } }
+  @keyframes ptPop { from { transform: translateY(-6px) scale(0.98); } to { transform: none; } }
+  .pt-scroll::-webkit-scrollbar { width: 0; height: 0; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="patco/shared.jsx"></script>
+<script type="text/babel" src="patco/flow-frame.jsx"></script>
+<script type="text/babel" src="patco/flow-home.jsx"></script>
+<script type="text/babel" src="patco/flow-stationmap.jsx"></script>
+<script type="text/babel" src="patco/flow-stationinfo.jsx"></script>
+<script type="text/babel" src="patco/flow-info.jsx"></script>
+<script type="text/babel" src="patco/flow-settings.jsx"></script>
+<script type="text/babel" src="patco/flow-paywall.jsx"></script>
+<script type="text/babel" src="patco/flow-appicon.jsx"></script>
+<script type="text/babel" src="patco/flow-date.jsx"></script>
+<script type="text/babel" src="patco/flow-station.jsx"></script>
+<script type="text/babel" src="patco/flow-trip.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+const TODAY = new Date(2026, 5, 2); // Tue Jun 2 2026
+
+function sameDay(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+function labels(date) {
+  const tmr = new Date(TODAY); tmr.setDate(TODAY.getDate() + 1);
+  const ystd = new Date(TODAY); ystd.setDate(TODAY.getDate() - 1);
+  let day = date.toLocaleDateString('en-US', { weekday: 'long' });
+  if (sameDay(date, TODAY)) day = 'Today';
+  else if (sameDay(date, tmr)) day = 'Tomorrow';
+  else if (sameDay(date, ystd)) day = 'Yesterday';
+  return { day, date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) };
+}
+
+function App() {
+  const [origin, setOrigin] = useState('Woodcrest');
+  const [dest, setDest] = useState('15/16th & Locust');
+  const [selectedDate, setSelectedDate] = useState(new Date(TODAY));
+  const [favOpen, setFavOpen] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(true);
+
+  const [sheet, setSheet] = useState(null);   // 'station' | 'trip'
+  const [which, setWhich] = useState('origin');
+  const [tripData, setTripData] = useState(null);
+  const [tab, setTab] = useState('schedule');     // 'schedule' | 'stationmap' | ...
+  const [infoStation, setInfoStation] = useState(null);
+  const [paywall, setPaywall] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+  const [appIconOpen, setAppIconOpen] = useState(false);
+  const [appIcon, setAppIcon] = useState('classic');
+
+  const close = () => setSheet(null);
+  const lab = labels(selectedDate);
+
+  const onSelectStation = (s) => {
+    if (which === 'origin') { if (s === dest) setDest(origin); setOrigin(s); }
+    else { if (s === origin) setOrigin(dest); setDest(s); }
+    close();
+  };
+
+  const sheets = (
+    <React.Fragment>
+      <Sheet open={sheet === 'station'} onClose={close} height="90%">
+        <StationSheet title={which === 'origin' ? 'Origin station' : 'Destination station'} selected={which === 'origin' ? origin : dest} onSelect={onSelectStation} onClose={close} />
+      </Sheet>
+      <Sheet open={sheet === 'trip'} onClose={close} height="92%">
+        <TripSheet trip={tripData} origin={origin} dest={dest} onClose={close} />
+      </Sheet>
+      <Sheet open={!!infoStation} onClose={() => setInfoStation(null)} height="94%">
+        <StationInfo station={infoStation} onClose={() => setInfoStation(null)} />
+      </Sheet>
+      <Sheet open={paywall} onClose={() => setPaywall(false)} height="88%">
+        <RemoveAdsSheet onClose={() => setPaywall(false)} onPurchase={() => { setIsPremium(true); setPaywall(false); }} />
+      </Sheet>
+      <Sheet open={appIconOpen} onClose={() => setAppIconOpen(false)} height="88%">
+        <AppIconSheet selected={appIcon} onSelect={setAppIcon} onClose={() => setAppIconOpen(false)} />
+      </Sheet>
+    </React.Fragment>
+  );
+
+  return (
+    <div style={{ minHeight: '100vh', padding: '40px 0 70px' }}>
+      <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 40px' }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 18 }}>
+          <a href="PATCO Schedule — Home Redesign.html" style={{ textDecoration: 'none', fontSize: 13.5, fontFamily: 'CircularStd-Bold, system-ui', color: '#5C5C64', background: '#fff', padding: '7px 14px', borderRadius: 999, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>← Home exploration</a>
+          <span style={{ fontSize: 13.5, fontFamily: 'CircularStd-Bold, system-ui', color: '#fff', background: PT.red, padding: '7px 14px', borderRadius: 999 }}>Home flow</span>
+        </div>
+        <div style={{ fontFamily: 'CircularStd-Black, system-ui', fontSize: 36, letterSpacing: -0.8 }}>Direction A — app flow</div>
+        <div style={{ fontSize: 16, color: '#4A4A52', marginTop: 12, lineHeight: 1.6 }}>
+          The “Up Next” language across the connected screens. It's a live, tappable prototype — switch tabs at the bottom. On <b>Schedule</b>: tap a station, the date, or any trip. On <b>Station Map</b>: tap any of the 14 stations to open its info.
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '36px 20px 0' }}>
+        <FlowFrame sheets={sheets} tab={tab} onTab={setTab}>
+          {tab === 'stationmap'
+            ? <FlowStationMap onOpenStation={(s) => setInfoStation(s)} />
+            : tab === 'info'
+            ? <FlowInfo />
+            : tab === 'settings'
+            ? <FlowSettings onUpgrade={() => setPaywall(true)} isPremium={isPremium} appIcon={appIcon} onChangeIcon={() => setAppIconOpen(true)} />
+            : <FlowHome
+            origin={origin} dest={dest}
+            onSwap={() => { const o = origin; setOrigin(dest); setDest(o); }}
+            onOpenStation={(w) => { setWhich(w); setSheet('station'); }}
+            onOpenTrip={(tr) => { setTripData(tr); setSheet('trip'); }}
+            dayLabel={lab.day} dateLabel={lab.date}
+            onStepDay={(d) => { const nd = new Date(selectedDate); nd.setDate(selectedDate.getDate() + d); setSelectedDate(nd); }}
+            selectedDate={selectedDate} today={TODAY} onSelectDate={setSelectedDate}
+            favOpen={favOpen} setFavOpen={setFavOpen}
+            onApplyFav={(f) => { setOrigin(f.o); setDest(f.d); setFavOpen(false); }}
+            alertOpen={alertOpen} onCloseAlert={() => setAlertOpen(false)}
+          />}
+        </FlowFrame>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
