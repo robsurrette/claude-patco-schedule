@@ -52,12 +52,16 @@ enum PTFont {
     }
 }
 
-extension Text {
-    /// Apply a `PTFont.Style` (font + tracking + optional tabular figures).
+extension View {
+    /// Apply a `PTFont.Style` (font + tracking + optional tabular figures) to a
+    /// view's text content. Works on `Text`, `Label`, stacks of labels, etc.
+    @ViewBuilder
     func ptStyle(_ style: PTFont.Style) -> some View {
-        var text = self.font(style.monospacedDigit ? style.font.monospacedDigit() : style.font)
-        text = text.tracking(style.tracking)
-        return text
+        if style.monospacedDigit {
+            self.font(style.font).tracking(style.tracking).monospacedDigit()
+        } else {
+            self.font(style.font).tracking(style.tracking)
+        }
     }
 }
 
