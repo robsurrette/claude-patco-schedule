@@ -51,9 +51,9 @@ struct ScheduleView: View {
                         NoTripsCard()
                     } else {
                         LaterTodayList(
-                            title: "Departures",
                             trips: displayTrips,
                             now: clock.now,
+                            title: "Departures",
                             showCountdown: false
                         )
                     }
