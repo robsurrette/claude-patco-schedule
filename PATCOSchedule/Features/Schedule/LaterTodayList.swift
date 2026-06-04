@@ -1,20 +1,24 @@
 import SwiftUI
 
-/// "Later today" section: up to five upcoming trips after the Up Next card.
+/// Upcoming or scheduled trips list, used for "Later today" (today) and
+/// "Departures" (other dates). Pass `showCountdown: false` for non-today dates
+/// to suppress the time-until-departure sub-label.
 struct LaterTodayList: View {
     let trips: [Trip]
     let now: Date
+    var title: String = "Later today"
+    var showCountdown: Bool = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            SectionHeader(title: "Later today")
+            SectionHeader(title: title)
                 .padding(.leading, 2)
 
             PTCard {
                 VStack(spacing: 0) {
                     ForEach(Array(trips.enumerated()), id: \.element.id) { index, trip in
                         if index > 0 { Hairline(inset: PTSpacing.screenH) }
-                        LaterTodayRow(trip: trip, now: now)
+                        LaterTodayRow(trip: trip, now: now, showCountdown: showCountdown)
                     }
                 }
             }
@@ -25,6 +29,7 @@ struct LaterTodayList: View {
 private struct LaterTodayRow: View {
     let trip: Trip
     let now: Date
+    var showCountdown: Bool = true
 
     private var seconds: Int { max(0, trip.secondsUntilDeparture(now: now)) }
 
@@ -37,14 +42,14 @@ private struct LaterTodayRow: View {
         return "\(mins) min"
     }
 
-    private var secondaryText: String {
+    private var countdownText: String {
         switch trip.status {
         case .onTime:           return "departs in \(untilLabel)"
         case .delayed(let m):   return "+\(m) min delay · \(untilLabel)"
         }
     }
 
-    private var secondaryColor: Color {
+    private var countdownColor: Color {
         trip.status == .onTime ? PTColor.ink2 : PTColor.amber
     }
 
@@ -62,9 +67,11 @@ private struct LaterTodayRow: View {
                         .ptStyle(PTFont.tripTime)
                         .foregroundStyle(PTColor.ink)
                 }
-                Text(secondaryText)
-                    .font(PTFont.book(13))
-                    .foregroundStyle(secondaryColor)
+                if showCountdown {
+                    Text(countdownText)
+                        .font(PTFont.book(13))
+                        .foregroundStyle(countdownColor)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -73,7 +80,7 @@ private struct LaterTodayRow: View {
                 .foregroundStyle(PTColor.ink3)
         }
         .padding(.horizontal, 16)
-        .frame(minHeight: 62)
+        .frame(minHeight: showCountdown ? 62 : 50)
         .contentShape(Rectangle())
     }
 }

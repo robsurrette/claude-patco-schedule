@@ -5,32 +5,58 @@ struct ScheduleView: View {
     @Environment(ClockTicker.self) private var clock
     @Environment(\.services) private var services
 
-    private var upcoming: [Trip] {
-        services.schedule.upcomingTrips(
-            origin: appState.origin,
-            dest: appState.destination,
-            date: appState.selectedDate,
-            now: clock.now
-        )
+    private var isToday: Bool {
+        Calendar.current.isDateInToday(appState.selectedDate)
+    }
+
+    private var displayTrips: [Trip] {
+        if isToday {
+            return services.schedule.upcomingTrips(
+                origin: appState.origin,
+                dest: appState.destination,
+                date: appState.selectedDate,
+                now: clock.now
+            )
+        } else {
+            return services.schedule.trips(
+                origin: appState.origin,
+                dest: appState.destination,
+                date: appState.selectedDate,
+                calendar: .current
+            )
+        }
     }
 
     var body: some View {
         @Bindable var appState = appState
         ScrollView {
             VStack(alignment: .leading, spacing: PTSpacing.cardGap) {
-                if let next = upcoming.first {
-                    UpNextCard(trip: next, now: clock.now)
+                if isToday {
+                    if let next = displayTrips.first {
+                        UpNextCard(trip: next, now: clock.now)
+                    } else {
+                        NoTripsCard()
+                    }
+                    if appState.alertVisible {
+                        AlertBanner { appState.alertVisible = false }
+                    }
+                    if displayTrips.count > 1 {
+                        LaterTodayList(
+                            trips: Array(displayTrips.dropFirst().prefix(5)),
+                            now: clock.now
+                        )
+                    }
                 } else {
-                    NoTripsCard()
-                }
-                if appState.alertVisible {
-                    AlertBanner { appState.alertVisible = false }
-                }
-                if upcoming.count > 1 {
-                    LaterTodayList(
-                        trips: Array(upcoming.dropFirst().prefix(5)),
-                        now: clock.now
-                    )
+                    if displayTrips.isEmpty {
+                        NoTripsCard()
+                    } else {
+                        LaterTodayList(
+                            trips: displayTrips,
+                            now: clock.now,
+                            title: "Departures",
+                            showCountdown: false
+                        )
+                    }
                 }
             }
             .padding(.horizontal, PTSpacing.screenH)
