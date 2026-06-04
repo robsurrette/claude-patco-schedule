@@ -33,7 +33,9 @@ struct ScheduleView: View {
             VStack(alignment: .leading, spacing: PTSpacing.cardGap) {
                 if isToday {
                     if let next = displayTrips.first {
-                        UpNextCard(trip: next, now: clock.now)
+                        UpNextCard(trip: next, now: clock.now) {
+                            appState.activeSheet = .tripDetails(next)
+                        }
                     } else {
                         NoTripsCard()
                     }
@@ -72,6 +74,8 @@ struct ScheduleView: View {
             switch sheet {
             case .stationPicker(let end):
                 StationPickerSheet(end: end)
+            case .tripDetails(let trip):
+                TripDetailsSheet(trip: trip)
             default:
                 EmptyView()
             }
