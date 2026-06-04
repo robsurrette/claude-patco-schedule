@@ -6,8 +6,6 @@ struct TripDetailsSheet: View {
     @Environment(\.services) private var services
     @Environment(ClockTicker.self) private var clock
     @Environment(\.dismiss) private var dismiss
-    @State private var cardBackground = true
-
     private var stops: [Station] {
         let lo = min(trip.origin.index, trip.dest.index)
         let hi = max(trip.origin.index, trip.dest.index)
@@ -26,7 +24,8 @@ struct TripDetailsSheet: View {
             // Header (non-scrollable)
             HStack {
                 Text("Trip details")
-                    .font(PTFont.bold(19))
+                    .font(PTFont.bold(23))
+                    .tracking(-0.3)
                     .foregroundStyle(PTColor.ink)
                 Spacer()
                 Button { dismiss() } label: {
@@ -162,16 +161,6 @@ struct TripDetailsSheet: View {
             Text("· \(trip.rideMinutes) min")
                 .font(PTFont.book(14))
                 .foregroundStyle(PTColor.ink2)
-            Spacer()
-            HStack(spacing: 8) {
-                Text("Card")
-                    .font(PTFont.medium(13))
-                    .foregroundStyle(PTColor.ink2)
-                Toggle("Card", isOn: $cardBackground)
-                    .toggleStyle(.switch)
-                    .tint(PTColor.green)
-                    .labelsHidden()
-            }
         }
     }
 
@@ -190,9 +179,9 @@ struct TripDetailsSheet: View {
         .padding(.horizontal, 16)
         .background(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(cardBackground ? PTColor.card : Color.clear)
+                .fill(PTColor.card)
         )
-        .shadow(color: cardBackground ? .black.opacity(0.04) : .clear, radius: 1, x: 0, y: 1)
+        .shadow(color: .black.opacity(0.04), radius: 1, x: 0, y: 1)
     }
 
     // MARK: - Helpers
