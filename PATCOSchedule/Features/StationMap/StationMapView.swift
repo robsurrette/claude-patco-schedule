@@ -1,43 +1,68 @@
 import SwiftUI
 
-/// Station Map tab — placeholder scaffold rendering the 14-stop rail list so the
-/// `StationRailDot` component and station data are verifiable. Tapping a row
-/// (to open Station Info) is wired next phase.
+/// Station Map tab — the 14-stop Speedline rendered as a tappable route list.
+/// Tapping a station opens its Station Info sheet.
 struct StationMapView: View {
+    @Environment(AppState.self) private var appState
+
     var body: some View {
+        @Bindable var appState = appState
         ScreenScaffold(title: "Station Map") {
-            PTCard(padding: 0) {
+            PTCard(radius: 18, padding: 0) {
                 VStack(spacing: 0) {
                     ForEach(Station.all) { station in
-                        stationRow(station)
-                        if station.index != Station.all.count - 1 {
-                            Hairline(inset: 44)
+                        StationMapRow(station: station) {
+                            appState.activeSheet = .stationInfo(station)
                         }
                     }
                 }
             }
         }
-    }
-
-    private func stationRow(_ station: Station) -> some View {
-        HStack(spacing: 12) {
-            StationRailDot(
-                style: .ring,
-                showTop: station.index != 0,
-                showBottom: station.index != Station.all.count - 1
-            )
-            .frame(width: 18, height: 48)
-
-            Text(station.name).ptStyle(PTFont.rowLabel)
-            Spacer()
-            Image(systemName: "chevron.right")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(PTColor.ink3)
+        .sheet(item: $appState.activeSheet) { sheet in
+            switch sheet {
+            case .stationInfo(let station):
+                StationInfoSheet(station: station)
+            default:
+                EmptyView()
+            }
         }
-        .padding(.horizontal, 14)
+    }
+}
+
+// MARK: - Row
+
+private struct StationMapRow: View {
+    let station: Station
+    let onTap: () -> Void
+
+    private var isFirst: Bool { station.index == 0 }
+    private var isLast: Bool { station.index == Station.all.count - 1 }
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 0) {
+                StationRailDot(style: .ring, showTop: !isFirst, showBottom: !isLast)
+                    .frame(width: 54)
+                Text(station.name)
+                    .ptStyle(PTFont.rowLabel)
+                    .foregroundStyle(PTColor.ink)
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(PTColor.ink3)
+                    .padding(.trailing, 16)
+            }
+            .frame(minHeight: 58)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .overlay(alignment: .bottom) {
+            if !isLast { Hairline(inset: 54) }
+        }
     }
 }
 
 #Preview {
     StationMapView()
+        .environment(AppState())
 }

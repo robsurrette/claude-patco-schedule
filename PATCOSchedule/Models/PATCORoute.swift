@@ -196,3 +196,10 @@ enum PATCORoute {
         return Array(coordinates[lo...hi])
     }
 }
+
+extension Station {
+    /// The station's geographic coordinate, sourced from `PATCORoute`.
+    var coordinate: CLLocationCoordinate2D? {
+        PATCORoute.stationCoordIndex[id].map { PATCORoute.coordinates[$0] }
+    }
+}
