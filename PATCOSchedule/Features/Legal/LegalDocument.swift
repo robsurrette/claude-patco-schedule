@@ -8,10 +8,8 @@ import Foundation
 ///   "- bullet"     → bullet row
 ///   blank line     → paragraph break
 ///
-/// NOTE: review before shipping and replace the bracketed placeholders
-/// ([Governing-law state], contact details) with your real values. Identical
-/// copies live in `docs/legal/` for hosting (App Store Connect needs a public
-/// Privacy Policy URL).
+/// Identical copies live in `docs/legal/` for hosting (App Store Connect needs
+/// a public Privacy Policy URL).
 struct LegalDocument: Identifiable {
     let id: String
     let title: String
@@ -21,7 +19,7 @@ struct LegalDocument: Identifiable {
 
 extension LegalDocument {
     /// Provider/developer name used throughout the documents.
-    static let provider = "Oakfield Solutions LLC"
+    static let provider = "Robert Surrette"
     static let appName = "PATCO Schedule"
     static let effective = "June 5, 2026"
 
@@ -75,7 +73,7 @@ extension LegalDocument {
         Providing your name and email in feedback is always optional. To ask a \
         question or request deletion of feedback you submitted, reach us through \
         the "Submit app developer feedback" option in Settings, or by email at \
-        [contact email].
+        robsurrette@gmail.com.
 
         ## Changes to this policy
         We may update this policy from time to time. Material changes will be \
@@ -134,11 +132,11 @@ extension LegalDocument {
 
         ## Governing law
         These Terms are governed by the laws of the State of \
-        [Governing-law state], without regard to its conflict-of-laws rules.
+        New Jersey, without regard to its conflict-of-laws rules.
 
         ## Contact
         Questions about these Terms? Reach us through the "Submit app developer \
-        feedback" option in Settings, or by email at [contact email].
+        feedback" option in Settings, or by email at robsurrette@gmail.com.
         """
     )
 }

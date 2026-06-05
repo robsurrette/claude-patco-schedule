@@ -2,7 +2,7 @@
 
 **Effective June 5, 2026**
 
-Oakfield Solutions LLC ("we," "us") built PATCO Schedule (the "App"). This policy explains what information the App handles and how. We designed the App to collect as little as possible.
+Robert Surrette ("we," "us") built PATCO Schedule (the "App"). This policy explains what information the App handles and how. We designed the App to collect as little as possible.
 
 ## Information you provide
 
@@ -39,7 +39,7 @@ The App is not directed to children under 13, and we do not knowingly collect in
 
 ## Your choices and contact
 
-Providing your name and email in feedback is always optional. To ask a question or request deletion of feedback you submitted, reach us through the "Submit app developer feedback" option in Settings, or by email at **[contact email]**.
+Providing your name and email in feedback is always optional. To ask a question or request deletion of feedback you submitted, reach us through the "Submit app developer feedback" option in Settings, or by email at **robsurrette@gmail.com**.
 
 ## Changes to this policy
 

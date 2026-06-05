@@ -2,7 +2,7 @@
 
 **Effective June 5, 2026**
 
-These Terms of Use ("Terms") govern your use of PATCO Schedule (the "App"), provided by Oakfield Solutions LLC. By downloading or using the App you agree to these Terms. The App is also subject to Apple's standard Licensed Application End User License Agreement (EULA), available at <https://www.apple.com/legal/internet-services/itunes/dev/stdeula/>; where these Terms add to it, both apply.
+These Terms of Use ("Terms") govern your use of PATCO Schedule (the "App"), provided by Robert Surrette. By downloading or using the App you agree to these Terms. The App is also subject to Apple's standard Licensed Application End User License Agreement (EULA), available at <https://www.apple.com/legal/internet-services/itunes/dev/stdeula/>; where these Terms add to it, both apply.
 
 ## License
 
@@ -26,12 +26,12 @@ The App is provided "as is" and "as available," without warranties of any kind, 
 
 ## Limitation of liability
 
-To the fullest extent permitted by law, Oakfield Solutions LLC will not be liable for any indirect, incidental, or consequential damages arising out of your use of, or inability to use, the App.
+To the fullest extent permitted by law, Robert Surrette will not be liable for any indirect, incidental, or consequential damages arising out of your use of, or inability to use, the App.
 
 ## Governing law
 
-These Terms are governed by the laws of the State of **[Governing-law state]**, without regard to its conflict-of-laws rules.
+These Terms are governed by the laws of the State of **New Jersey**, without regard to its conflict-of-laws rules.
 
 ## Contact
 
-Questions about these Terms? Reach us through the "Submit app developer feedback" option in Settings, or by email at **[contact email]**.
+Questions about these Terms? Reach us through the "Submit app developer feedback" option in Settings, or by email at **robsurrette@gmail.com**.
