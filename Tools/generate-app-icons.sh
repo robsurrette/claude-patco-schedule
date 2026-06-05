@@ -71,6 +71,29 @@ for entry in "${ENTRIES[@]}"; do
 }
 JSON
 
+  # --- Primary app icon: "classic" is the default home-screen icon ---
+  if [[ "$id" == "classic" ]]; then
+    appicon="$CAT/AppIcon.appiconset"
+    mkdir -p "$appicon"
+    cp "$src" "$appicon/AppIcon.png"
+    cat > "$appicon/Contents.json" <<JSON
+{
+  "images" : [
+    {
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024",
+      "filename" : "AppIcon.png"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
+JSON
+  fi
+
   # --- Alternate app icon set (skip primary "classic") ---
   if [[ -n "$alt" ]]; then
     appset="$CAT/$alt.appiconset"
