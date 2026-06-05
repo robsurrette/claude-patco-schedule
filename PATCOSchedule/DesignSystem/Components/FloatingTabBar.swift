@@ -21,7 +21,7 @@ struct FloatingTabBar: View {
         .clipShape(RoundedRectangle(cornerRadius: PTRadius.tabBar, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: PTRadius.tabBar, style: .continuous)
-                .stroke(.black.opacity(0.04), lineWidth: 0.5)
+                .stroke(PTColor.hair, lineWidth: 0.5)
         )
         .ptShadow(.tabBar)
         .padding(.horizontal, 28)
@@ -44,7 +44,7 @@ struct FloatingTabBar: View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(isActive ? Color.black.opacity(0.05) : .clear)
+                    .fill(isActive ? PTColor.tabActive : .clear)
             )
         }
         .buttonStyle(.plain)

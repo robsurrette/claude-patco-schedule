@@ -4,16 +4,15 @@ import StoreKit
 
 /// Owns the one-time "Remove Ads" purchase and the resulting premium flag.
 ///
-/// Uses StoreKit 2. The product identifier is a **placeholder** — replace
-/// `Self.removeAdsProductID` with the real identifier from App Store Connect
-/// (the existing app's IAP) so the product loads and existing customers can
-/// Restore. Premium state is cached in UserDefaults for instant launch, then
-/// reconciled against `Transaction.currentEntitlements`.
+/// Uses StoreKit 2. The product identifier is the live "Remove Ads" IAP from
+/// App Store Connect, so the product loads and existing customers can Restore.
+/// Premium state is cached in UserDefaults for instant launch, then reconciled
+/// against `Transaction.currentEntitlements`.
 @Observable
 @MainActor
 final class PremiumStore {
-    /// TODO: replace with the live product id from App Store Connect.
-    static let removeAdsProductID = "com.robsurrette.PatcoTrainSchedule.removeads"
+    /// The live "Remove Ads" product id from App Store Connect.
+    static let removeAdsProductID = "com.robsurrette.PatcoTrainSchedule.removeAds"
 
     private static let cacheKey = "patco.isPremium"
     private let defaults: UserDefaults
@@ -43,9 +42,10 @@ final class PremiumStore {
         Task { await loadProducts() }
     }
 
-    /// Display price, e.g. "$1.99". Falls back to the prototype's price.
+    /// Display price, e.g. "$0.99". Falls back to the configured price until the
+    /// product loads from StoreKit.
     var displayPrice: String {
-        removeAdsProduct?.displayPrice ?? "$1.99"
+        removeAdsProduct?.displayPrice ?? "$0.99"
     }
 
     func loadProducts() async {
@@ -59,10 +59,19 @@ final class PremiumStore {
         }
     }
 
-    /// Trigger the purchase flow. Returns true if it resulted in premium.
+    /// The outcome of a purchase attempt, so callers can tell a user cancel
+    /// (no error UI) apart from a genuine failure.
+    enum PurchaseOutcome {
+        case success
+        case cancelled
+        case pending
+        case failed
+    }
+
+    /// Trigger the purchase flow.
     @discardableResult
-    func purchase() async -> Bool {
-        guard let product = removeAdsProduct else { return false }
+    func purchase() async -> PurchaseOutcome {
+        guard let product = removeAdsProduct else { return .failed }
         isPurchasing = true
         defer { isPurchasing = false }
         do {
@@ -70,14 +79,16 @@ final class PremiumStore {
             switch result {
             case .success(let verification):
                 await handle(verification: verification)
-                return isPremium
-            case .userCancelled, .pending:
-                return false
+                return isPremium ? .success : .failed
+            case .userCancelled:
+                return .cancelled
+            case .pending:
+                return .pending
             @unknown default:
-                return false
+                return .failed
             }
         } catch {
-            return false
+            return .failed
         }
     }
 
