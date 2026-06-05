@@ -55,9 +55,14 @@ struct StationInfoSheet: View {
 
     private var hero: some View {
         ZStack(alignment: .topTrailing) {
-            heroImage
+            // `Color.clear` is the size-defining base (container width × 200).
+            // The photo is a clipped overlay: an overlay is laid out at the
+            // base's size and never expands it, so the hero can't be widened by
+            // a `scaledToFill` image whose aspect ratio is wider than the frame.
+            Color.clear
                 .frame(maxWidth: .infinity)
                 .frame(height: 200)
+                .overlay { heroImage }
                 .clipped()
 
             closeButton
