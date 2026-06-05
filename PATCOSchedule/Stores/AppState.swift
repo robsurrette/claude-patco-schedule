@@ -1,5 +1,8 @@
 import Foundation
 import Observation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// App-level UI state, mirroring the prototype's `App()` state object.
 ///
@@ -8,6 +11,7 @@ import Observation
 @Observable
 final class AppState {
     private static let themeKey = "patco.theme"
+    private static let appIconKey = "patco.appIcon"
     @ObservationIgnored private let defaults: UserDefaults
 
     // Route
@@ -30,7 +34,11 @@ final class AppState {
     var theme: AppTheme = .automatic {
         didSet { defaults.set(theme.rawValue, forKey: Self.themeKey) }
     }
-    var currentAppIcon: AppIconOption = .default
+    /// The selected app icon. Persisted (by id); the actual home-screen icon is
+    /// changed via `applyAppIcon(_:)`.
+    var currentAppIcon: AppIconOption = .default {
+        didSet { defaults.set(currentAppIcon.id, forKey: Self.appIconKey) }
+    }
 
     // Saved routes (in-memory for the skeleton; persistence comes later)
     var savedRoutes: [SavedRoute] = SavedRoute.samples
@@ -51,6 +59,36 @@ final class AppState {
            let stored = AppTheme(rawValue: raw) {
             theme = stored
         }
+        // Restore the saved app-icon selection (the system already remembers the
+        // active icon across launches; this keeps our UI selection in sync).
+        if let iconID = defaults.string(forKey: Self.appIconKey) {
+            currentAppIcon = .option(id: iconID)
+        }
+    }
+
+    // MARK: Appearance actions
+
+    /// Change the home-screen app icon and update the stored selection. Shows the
+    /// system "you've changed your icon" alert. No-op if already selected or if
+    /// the device doesn't support alternate icons.
+    @MainActor
+    func applyAppIcon(_ option: AppIconOption) async {
+        #if canImport(UIKit)
+        let app = UIApplication.shared
+        guard app.supportsAlternateIcons else {
+            currentAppIcon = option
+            return
+        }
+        if app.alternateIconName != option.iconName {
+            do {
+                try await app.setAlternateIconName(option.iconName)
+            } catch {
+                // Keep the previous selection if the change failed.
+                return
+            }
+        }
+        #endif
+        currentAppIcon = option
     }
 
     // MARK: Route actions

@@ -1,5 +1,10 @@
 # App icon source images
 
+> **Current state:** the PNGs here are **placeholders** — low-res design
+> mockups upscaled to 1024×1024 so the picker is functional. Replace them with
+> the real 1024×1024 art (same filenames) and re-run
+> `Tools/generate-app-icons.sh` to swap in the final icons.
+
 Drop your 15 alternate app-icon PNGs **in this folder** (`AppIconSource/`).
 It lives outside the app target on purpose, so these raw files are **not**
 bundled into the app — a generator script turns them into the proper asset

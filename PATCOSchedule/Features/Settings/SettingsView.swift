@@ -8,6 +8,7 @@ struct SettingsView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var showPaywall = false
+    @State private var showAppIconPicker = false
     @State private var showDeveloperFeedback = false
     @State private var showPatcoMail = false
 
@@ -35,6 +36,9 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showPaywall) {
             RemoveAdsSheet()
+        }
+        .sheet(isPresented: $showAppIconPicker) {
+            AppIconPickerSheet()
         }
         .sheet(isPresented: $showDeveloperFeedback) {
             DeveloperFeedbackSheet()
@@ -143,35 +147,39 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - App icon (stubbed until alternate icon assets are imported)
+    // MARK: - App icon
 
     private var appIconRow: some View {
-        // TODO: present `AppIconPickerSheet` once the 15 alternate-icon
-        // .appiconset previews are added to Assets.xcassets (see Appearance.swift).
-        PTCard(padding: 0) {
-            HStack(spacing: 13) {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(PTColor.fill)
-                    .frame(width: 40, height: 40)
-                    .overlay {
-                        Image(systemName: "app.dashed")
-                            .font(.system(size: 18))
-                            .foregroundStyle(PTColor.ink3)
+        Button { showAppIconPicker = true } label: {
+            PTCard(padding: 0) {
+                HStack(spacing: 13) {
+                    Image(appState.currentAppIcon.assetName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 40, height: 40)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .strokeBorder(PTColor.hairBold, lineWidth: 0.5)
+                        )
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Change app icon")
+                            .ptStyle(PTFont.rowLabel)
+                            .foregroundStyle(PTColor.ink)
+                        Text(appState.currentAppIcon.displayName)
+                            .font(PTFont.book(13))
+                            .foregroundStyle(PTColor.ink2)
                     }
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("Change app icon")
-                        .ptStyle(PTFont.rowLabel)
-                        .foregroundStyle(PTColor.ink)
-                    Text("Coming soon")
-                        .font(PTFont.book(13))
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(PTColor.ink3)
                 }
-                Spacer(minLength: 0)
+                .padding(.horizontal, 16)
+                .frame(minHeight: 64)
             }
-            .padding(.horizontal, 16)
-            .frame(minHeight: 64)
         }
-        .opacity(0.7)
+        .buttonStyle(.plain)
     }
 
     // MARK: - Feedback
