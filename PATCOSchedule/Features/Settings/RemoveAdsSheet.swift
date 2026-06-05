@@ -7,6 +7,9 @@ struct RemoveAdsSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var showError = false
+    @State private var isRestoring = false
+    @State private var showRestoreEmpty = false
+    @State private var legalDocument: LegalDocument?
 
     private struct Benefit: Identifiable {
         let id = UUID()
@@ -45,6 +48,14 @@ struct RemoveAdsSheet: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text("Something went wrong. You weren't charged — please try again.")
+        }
+        .alert("No purchases to restore", isPresented: $showRestoreEmpty) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("We couldn't find a previous Remove Ads purchase on this Apple Account.")
+        }
+        .sheet(item: $legalDocument) { doc in
+            LegalDocumentSheet(document: doc)
         }
     }
 
@@ -160,17 +171,28 @@ struct RemoveAdsSheet: View {
             .buttonStyle(.plain)
             .disabled(premium.isPurchasing)
 
-            HStack(spacing: 18) {
-                Button("Restore purchase", action: restore)
-                    .font(PTFont.medium(13.5))
+            Button(action: restore) {
+                if isRestoring {
+                    ProgressView().controlSize(.small)
+                } else {
+                    Text("Restore purchase")
+                        .font(PTFont.medium(13.5))
+                        .foregroundStyle(PTColor.ink2)
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(premium.isPurchasing || isRestoring)
+
+            HStack(spacing: 14) {
+                Button("Terms") { legalDocument = .terms }
+                    .font(PTFont.medium(13))
                     .foregroundStyle(PTColor.ink2)
                 Circle().fill(PTColor.ink3).frame(width: 3, height: 3)
-                Button("Terms") { }
-                    .font(PTFont.medium(13.5))
+                Button("Privacy") { legalDocument = .privacy }
+                    .font(PTFont.medium(13))
                     .foregroundStyle(PTColor.ink2)
             }
             .buttonStyle(.plain)
-            .disabled(premium.isPurchasing)
 
             Text("One-time purchase · no subscription")
                 .font(PTFont.book(12))
@@ -201,7 +223,16 @@ struct RemoveAdsSheet: View {
     }
 
     private func restore() {
-        Task { await premium.restore() }
+        Task {
+            isRestoring = true
+            await premium.restore()
+            isRestoring = false
+            // On success `isPremium` flips and the sheet dismisses via onChange;
+            // if nothing was restored, tell the user.
+            if !premium.isPremium {
+                showRestoreEmpty = true
+            }
+        }
     }
 }
 
