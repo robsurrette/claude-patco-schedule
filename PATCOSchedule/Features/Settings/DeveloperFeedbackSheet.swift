@@ -89,7 +89,7 @@ struct DeveloperFeedbackSheet: View {
                 }
 
                 field(label: "Email", optional: true) {
-                    TextField("you@example.com", text: $email)
+                    TextField("Your email", text: $email)
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
