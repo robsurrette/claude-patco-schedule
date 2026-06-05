@@ -8,11 +8,13 @@ struct AppServices {
     var schedule: ScheduleProvider
     var fares: FareProvider
     var ads: AdProvider
+    var feedback: FeedbackService
 
     static let live = AppServices(
         schedule: BundledScheduleSource(),
         fares: ZoneFareProvider(),
-        ads: NoOpAdProvider()
+        ads: NoOpAdProvider(),
+        feedback: .live
     )
 }
 
