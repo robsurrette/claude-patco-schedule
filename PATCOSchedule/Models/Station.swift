@@ -10,8 +10,9 @@ struct Station: Identifiable, Hashable, Codable {
     let name: String
     let index: Int
 
-    /// True for the four Center-City Philadelphia stations (affects the
-    /// amenity set shown on Station Info).
+    /// True for the four underground Center-City Philadelphia stations
+    /// (8th & Market eastward). The Station Info amenity set uses a broader
+    /// urban grouping — see `amenities`.
     var isCenterCity: Bool { index >= 10 }
 }
 
