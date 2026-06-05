@@ -5,6 +5,7 @@ import SwiftUI
 struct UpNextCard: View {
     let trip: Trip
     let now: Date
+    var onTap: (() -> Void)? = nil
 
     private var seconds: Int { max(0, trip.secondsUntilDeparture(now: now)) }
     private var minutesUntil: Int { Int(ceil(Double(seconds) / 60.0)) }
@@ -62,6 +63,8 @@ struct UpNextCard: View {
         .background(PTColor.card)
         .clipShape(RoundedRectangle(cornerRadius: PTRadius.cardLarge, style: .continuous))
         .ptShadow(.elevated)
+        .contentShape(RoundedRectangle(cornerRadius: PTRadius.cardLarge, style: .continuous))
+        .onTapGesture { onTap?() }
     }
 
     private func timeRow(label: String, date: Date) -> some View {

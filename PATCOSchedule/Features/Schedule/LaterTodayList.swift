@@ -30,6 +30,7 @@ private struct LaterTodayRow: View {
     let trip: Trip
     let now: Date
     var showCountdown: Bool = true
+    @Environment(AppState.self) private var appState
 
     private var seconds: Int { max(0, trip.secondsUntilDeparture(now: now)) }
 
@@ -82,5 +83,8 @@ private struct LaterTodayRow: View {
         .padding(.horizontal, 16)
         .frame(minHeight: showCountdown ? 62 : 50)
         .contentShape(Rectangle())
+        .onTapGesture {
+            appState.activeSheet = .tripDetails(trip)
+        }
     }
 }
