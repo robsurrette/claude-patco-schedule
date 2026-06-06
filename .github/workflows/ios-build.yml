@@ -20,7 +20,6 @@ jobs:
       SCHEME: PATCOSchedule
       PROJECT: PATCOSchedule.xcodeproj
       SIMULATOR: iPhone 16
-      BUNDLE_ID: com.robsurrette.PatcoTrainSchedule
 
     steps:
       - uses: actions/checkout@v4
@@ -47,24 +46,3 @@ jobs:
             -destination "platform=iOS Simulator,name=$SIMULATOR" \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO
-
-      # The steps below are best-effort: a green build above is the real gate.
-      - name: Boot simulator, install & screenshot
-        continue-on-error: true
-        run: |
-          APP=$(find build/Build/Products/Debug-iphonesimulator -maxdepth 1 -name '*.app' | head -1)
-          echo "App: $APP"
-          xcrun simctl boot "$SIMULATOR" || true
-          xcrun simctl bootstatus "$SIMULATOR" -b || true
-          xcrun simctl install booted "$APP"
-          xcrun simctl launch booted "$BUNDLE_ID" || true
-          sleep 8
-          xcrun simctl io booted screenshot screenshot.png
-
-      - name: Upload screenshot
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: simulator-screenshot
-          path: screenshot.png
-          if-no-files-found: ignore
