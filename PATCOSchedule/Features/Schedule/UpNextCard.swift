@@ -55,7 +55,8 @@ struct UpNextCard: View {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(PTColor.ink3)
-                    .padding(.leading, 8)
+                    .padding(.leading, 12)
+                    .padding(.trailing, 2)
             }
         }
         .padding(16)
