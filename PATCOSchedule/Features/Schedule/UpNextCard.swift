@@ -44,7 +44,7 @@ struct UpNextCard: View {
                 // Depart / arrive
                 HStack(spacing: 0) {
                     Rectangle()
-                        .fill(PTColor.hair)
+                        .fill(PTColor.hairBold)
                         .frame(width: 0.5, height: 48)
                     VStack(alignment: .leading, spacing: 5) {
                         timeRow(label: "Depart", date: trip.depart)
@@ -72,7 +72,8 @@ struct UpNextCard: View {
             Text(label)
                 .font(PTFont.book(12.5))
                 .foregroundStyle(PTColor.ink2)
-                .frame(width: 40, alignment: .leading)
+                .lineLimit(1)
+                .frame(width: 52, alignment: .leading)
             Text(date.formatted(date: .omitted, time: .shortened))
                 .font(PTFont.bold(16))
                 .foregroundStyle(PTColor.ink)
