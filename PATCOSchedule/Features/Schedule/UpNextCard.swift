@@ -22,7 +22,7 @@ struct UpNextCard: View {
 
             HStack(alignment: .center, spacing: 0) {
                 // Live countdown
-                HStack(alignment: .bottom, spacing: 7) {
+                HStack(alignment: .center, spacing: 7) {
                     Text("\(minutesUntil)")
                         .ptStyle(PTFont.countdown)
                         .foregroundStyle(PTColor.ink)
@@ -36,7 +36,6 @@ struct UpNextCard: View {
                             .foregroundStyle(PTColor.ink2)
                             .monospacedDigit()
                     }
-                    .padding(.bottom, 5)
                 }
 
                 Spacer(minLength: 12)
