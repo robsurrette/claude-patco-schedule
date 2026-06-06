@@ -51,21 +51,49 @@ struct StationRailDot: View {
     }
 }
 
-/// The route selector's origin→destination indicator: hollow ring (origin), a
-/// 2px connector, and a red map-pin (destination).
+/// The route selector's origin→destination indicator: a hollow ring (origin)
+/// and a red map-pin (destination) joined by a thin connector. Each endpoint is
+/// centered within its own half of the available height so it lines up with the
+/// center of its corresponding station label row.
 struct RouteEndpointIndicator: View {
     var body: some View {
         VStack(spacing: 0) {
-            Circle()
-                .stroke(PTColor.ink3, lineWidth: 2)
-                .frame(width: 12, height: 12)
-            Rectangle()
-                .fill(PTColor.hairBold)
-                .frame(width: 2, height: 22)
-            Image(systemName: "mappin.circle.fill")
-                .font(.system(size: 14))
-                .foregroundStyle(PTColor.red)
+            endpointRow(showTop: false, showBottom: true) {
+                Circle()
+                    .fill(PTColor.card)
+                    .overlay(Circle().stroke(PTColor.ink3, lineWidth: 2))
+                    .frame(width: 12, height: 12)
+            }
+            endpointRow(showTop: true, showBottom: false) {
+                Image(systemName: "mappin.circle.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(PTColor.red)
+            }
         }
+        .frame(width: 14)
+        .frame(maxHeight: .infinity)
+    }
+
+    private func endpointRow<Content: View>(
+        showTop: Bool,
+        showBottom: Bool,
+        @ViewBuilder dot: () -> Content
+    ) -> some View {
+        ZStack {
+            VStack(spacing: 0) {
+                connector(visible: showTop)
+                connector(visible: showBottom)
+            }
+            dot()
+        }
+        .frame(maxHeight: .infinity)
+    }
+
+    private func connector(visible: Bool) -> some View {
+        Rectangle()
+            .fill(visible ? PTColor.hairBold : Color.clear)
+            .frame(width: 2)
+            .frame(maxHeight: .infinity)
     }
 }
 
