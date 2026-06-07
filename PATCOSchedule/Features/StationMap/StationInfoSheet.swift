@@ -206,9 +206,27 @@ private extension Station {
     /// the sheet shows a striped placeholder.
     var heroImageName: String { "station-\(id)" }
 
-    /// Official PATCO station information page. (A per-station deep link can
-    /// replace this once confirmed.)
-    var websiteURL: URL { URL(string: "https://www.ridepatco.org/stations/")! }
+    /// Official PATCO station information page. Each station deep-links to its
+    /// own page; the slug differs from `id` for a few stations (e.g. Ferry
+    /// Avenue → `ferryave`, the Center-City stops → `8th`/`9th`/`12th`/`15th`).
+    var websiteURL: URL {
+        let base = "http://www.ridepatco.org/stations/"
+        return URL(string: base + Station.websiteSlug(forID: id) + ".asp")!
+    }
+
+    /// Maps a station `id` to the slug used in its ridepatco.org page URL.
+    static func websiteSlug(forID id: String) -> String {
+        switch id {
+        case "ferry-avenue":    return "ferryave"
+        case "city-hall":       return "cityhall"
+        case "franklin-square": return "franklinsquare"
+        case "8th-market":      return "8th"
+        case "9-10th-locust":   return "9th"
+        case "12-13th-locust":  return "12th"
+        case "15-16th-locust":  return "15th"
+        default:                return id
+        }
+    }
 }
 
 // MARK: - Amenity chip
