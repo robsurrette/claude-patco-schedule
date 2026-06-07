@@ -8,26 +8,22 @@ struct RootTabView: View {
     var body: some View {
         @Bindable var appState = appState
 
+        // Each tab supplies its outlined symbol; SwiftUI automatically renders
+        // the filled variant for the selected tab.
         TabView(selection: $appState.tab) {
             ScheduleView()
-                .tabItem { tabLabel(.schedule) }
+                .tabItem { Label(AppTab.schedule.title, systemImage: AppTab.schedule.symbol) }
                 .tag(AppTab.schedule)
             StationMapView()
-                .tabItem { tabLabel(.stationMap) }
+                .tabItem { Label(AppTab.stationMap.title, systemImage: AppTab.stationMap.symbol) }
                 .tag(AppTab.stationMap)
             InfoView()
-                .tabItem { tabLabel(.info) }
+                .tabItem { Label(AppTab.info.title, systemImage: AppTab.info.symbol) }
                 .tag(AppTab.info)
             SettingsView()
-                .tabItem { tabLabel(.settings) }
+                .tabItem { Label(AppTab.settings.title, systemImage: AppTab.settings.symbol) }
                 .tag(AppTab.settings)
         }
-    }
-
-    /// Outlined icon when inactive, filled when this tab is selected.
-    private func tabLabel(_ tab: AppTab) -> some View {
-        let symbol = appState.tab == tab ? tab.symbolFilled : tab.symbol
-        return Label(tab.title, systemImage: symbol)
     }
 }
 
