@@ -8,20 +8,20 @@ struct RootTabView: View {
     var body: some View {
         @Bindable var appState = appState
 
-        // Each tab supplies its outlined symbol; SwiftUI automatically renders
-        // the filled variant for the selected tab.
+        // Each tab shows its outlined symbol when inactive and its filled
+        // symbol when selected, so the active tab reads as highlighted.
         TabView(selection: $appState.tab) {
             ScheduleView()
-                .tabItem { Label(AppTab.schedule.title, systemImage: AppTab.schedule.symbol) }
+                .tabItem { Label(AppTab.schedule.title, systemImage: AppTab.schedule.symbol(selected: appState.tab == .schedule)) }
                 .tag(AppTab.schedule)
             StationMapView()
-                .tabItem { Label(AppTab.stationMap.title, systemImage: AppTab.stationMap.symbol) }
+                .tabItem { Label(AppTab.stationMap.title, systemImage: AppTab.stationMap.symbol(selected: appState.tab == .stationMap)) }
                 .tag(AppTab.stationMap)
             InfoView()
-                .tabItem { Label(AppTab.info.title, systemImage: AppTab.info.symbol) }
+                .tabItem { Label(AppTab.info.title, systemImage: AppTab.info.symbol(selected: appState.tab == .info)) }
                 .tag(AppTab.info)
             SettingsView()
-                .tabItem { Label(AppTab.settings.title, systemImage: AppTab.settings.symbol) }
+                .tabItem { Label(AppTab.settings.title, systemImage: AppTab.settings.symbol(selected: appState.tab == .settings)) }
                 .tag(AppTab.settings)
         }
         // Single presenter for `activeSheet`. With a native TabView all tab
