@@ -51,6 +51,8 @@ struct UpNextCard: View {
                     }
                     .padding(.leading, 14)
                 }
+                .fixedSize(horizontal: true, vertical: false)
+                .layoutPriority(1)
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 13, weight: .semibold))
@@ -78,6 +80,8 @@ struct UpNextCard: View {
                 .font(PTFont.bold(16))
                 .foregroundStyle(PTColor.ink)
                 .monospacedDigit()
+                .lineLimit(1)
+                .fixedSize()
         }
     }
 }
