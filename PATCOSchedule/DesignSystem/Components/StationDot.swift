@@ -51,21 +51,62 @@ struct StationRailDot: View {
     }
 }
 
-/// The route selector's origin→destination indicator: hollow ring (origin), a
-/// 2px connector, and a red map-pin (destination).
+/// The route selector's origin→destination indicator: a hollow ring (origin)
+/// and a red map-pin (destination) joined by a thin connector. Each endpoint
+/// occupies a row sized to match a station label row (same font + vertical
+/// padding) so the dots line up with the center of each station label.
 struct RouteEndpointIndicator: View {
     var body: some View {
         VStack(spacing: 0) {
-            Circle()
-                .stroke(PTColor.ink3, lineWidth: 2)
-                .frame(width: 12, height: 12)
-            Rectangle()
-                .fill(PTColor.hairBold)
-                .frame(width: 2, height: 22)
-            Image(systemName: "mappin.circle.fill")
-                .font(.system(size: 14))
-                .foregroundStyle(PTColor.red)
+            endpointRow(showTop: false, showBottom: true) {
+                Circle()
+                    .fill(PTColor.card)
+                    .overlay(Circle().stroke(PTColor.ink3, lineWidth: 2))
+                    .frame(width: 12, height: 12)
+            }
+            endpointRow(showTop: true, showBottom: false) {
+                Image(systemName: "mappin.circle.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(PTColor.red)
+            }
         }
+        .frame(width: 14)
+    }
+
+    private func endpointRow<Content: View>(
+        showTop: Bool,
+        showBottom: Bool,
+        @ViewBuilder dot: () -> Content
+    ) -> some View {
+        // A hidden label sizes the row to exactly one station-button row, so the
+        // dot (centered in the overlay) aligns with that label's center.
+        rowSizer
+            .overlay {
+                ZStack {
+                    VStack(spacing: 0) {
+                        connector(visible: showTop)
+                        connector(visible: showBottom)
+                    }
+                    dot()
+                }
+            }
+    }
+
+    /// Mirrors `RouteSelectorCard`'s station button: `PTFont.rowLabel` text with
+    /// 13pt vertical padding. Kept invisible — used only to establish row height.
+    private var rowSizer: some View {
+        Text(" ")
+            .ptStyle(PTFont.rowLabel)
+            .padding(.vertical, 13)
+            .opacity(0)
+            .accessibilityHidden(true)
+    }
+
+    private func connector(visible: Bool) -> some View {
+        Rectangle()
+            .fill(visible ? PTColor.hairBold : Color.clear)
+            .frame(width: 2)
+            .frame(maxHeight: .infinity)
     }
 }
 

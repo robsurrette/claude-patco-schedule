@@ -22,7 +22,7 @@ struct UpNextCard: View {
 
             HStack(alignment: .center, spacing: 0) {
                 // Live countdown
-                HStack(alignment: .bottom, spacing: 7) {
+                HStack(alignment: .center, spacing: 7) {
                     Text("\(minutesUntil)")
                         .ptStyle(PTFont.countdown)
                         .foregroundStyle(PTColor.ink)
@@ -36,7 +36,6 @@ struct UpNextCard: View {
                             .foregroundStyle(PTColor.ink2)
                             .monospacedDigit()
                     }
-                    .padding(.bottom, 5)
                 }
 
                 Spacer(minLength: 12)
@@ -44,7 +43,7 @@ struct UpNextCard: View {
                 // Depart / arrive
                 HStack(spacing: 0) {
                     Rectangle()
-                        .fill(PTColor.hair)
+                        .fill(PTColor.hairBold)
                         .frame(width: 0.5, height: 48)
                     VStack(alignment: .leading, spacing: 5) {
                         timeRow(label: "Depart", date: trip.depart)
@@ -56,7 +55,8 @@ struct UpNextCard: View {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(PTColor.ink3)
-                    .padding(.leading, 8)
+                    .padding(.leading, 12)
+                    .padding(.trailing, 2)
             }
         }
         .padding(16)
@@ -72,7 +72,8 @@ struct UpNextCard: View {
             Text(label)
                 .font(PTFont.book(12.5))
                 .foregroundStyle(PTColor.ink2)
-                .frame(width: 40, alignment: .leading)
+                .lineLimit(1)
+                .frame(width: 52, alignment: .leading)
             Text(date.formatted(date: .omitted, time: .shortened))
                 .font(PTFont.bold(16))
                 .foregroundStyle(PTColor.ink)

@@ -28,7 +28,6 @@ struct ScheduleView: View {
     }
 
     var body: some View {
-        @Bindable var appState = appState
         ScrollView {
             VStack(alignment: .leading, spacing: PTSpacing.cardGap) {
                 if isToday {
@@ -63,23 +62,12 @@ struct ScheduleView: View {
             }
             .padding(.horizontal, PTSpacing.screenH)
             .padding(.top, PTSpacing.cardGap)
-            .padding(.bottom, 96)
         }
         .safeAreaInset(edge: .top, spacing: 0) {
             ScheduleHeader()
         }
         .background(PTColor.bg)
         .ignoresSafeArea(edges: .top)
-        .sheet(item: $appState.activeSheet) { sheet in
-            switch sheet {
-            case .stationPicker(let end):
-                StationPickerSheet(end: end)
-            case .tripDetails(let trip):
-                TripDetailsSheet(trip: trip)
-            default:
-                EmptyView()
-            }
-        }
     }
 }
 

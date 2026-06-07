@@ -1,14 +1,11 @@
 import SwiftUI
 
 /// Shared per-tab layout: a pinned blurred `StickyHeader` over scrollable
-/// content, with bottom inset so content clears the floating tab bar.
+/// content. The native tab bar manages its own bottom scroll inset.
 struct ScreenScaffold<Trailing: View, Content: View>: View {
     let title: String
     @ViewBuilder var trailing: Trailing
     @ViewBuilder var content: Content
-
-    /// Approx. floating tab-bar height + bottom offset.
-    private let tabBarInset: CGFloat = 96
 
     var body: some View {
         ScrollView {
@@ -17,7 +14,6 @@ struct ScreenScaffold<Trailing: View, Content: View>: View {
             }
             .padding(.horizontal, PTSpacing.screenH)
             .padding(.top, 4)
-            .padding(.bottom, tabBarInset)
         }
         .safeAreaInset(edge: .top, spacing: 0) {
             StickyHeader(title: title) { trailing }

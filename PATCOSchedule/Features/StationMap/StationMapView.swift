@@ -6,7 +6,6 @@ struct StationMapView: View {
     @Environment(AppState.self) private var appState
 
     var body: some View {
-        @Bindable var appState = appState
         ScreenScaffold(title: "Station Map") {
             PTCard(radius: 18, padding: 0) {
                 VStack(spacing: 0) {
@@ -16,14 +15,6 @@ struct StationMapView: View {
                         }
                     }
                 }
-            }
-        }
-        .sheet(item: $appState.activeSheet) { sheet in
-            switch sheet {
-            case .stationInfo(let station):
-                StationInfoSheet(station: station)
-            default:
-                EmptyView()
             }
         }
     }

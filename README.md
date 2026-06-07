@@ -19,9 +19,9 @@ tab by tab.
   `PTShadow` (`PATCOSchedule/DesignSystem/`).
 - Circular Std fonts bundled + registered via `UIAppFonts`.
 - Shared components: `PTCard`, `PTPill`, `SectionHeader`, `Hairline`,
-  `PulsingDot`, `StationRailDot`, `RouteEndpointIndicator`, `StickyHeader`,
-  `FloatingTabBar`.
-- Root scaffold (`RootTabView`) + observable state (`AppState`,
+  `PulsingDot`, `StationRailDot`, `RouteEndpointIndicator`, `StickyHeader`.
+- Root scaffold (`RootTabView`, a native `TabView` with iOS 26 Liquid Glass) +
+  observable state (`AppState`,
   `FavoritesStore`, `PremiumStore`, `ClockTicker`).
 - Model layer + the bundled-/remote-shared schedule schema, with
   `MockSchedule.json` (full-day service, both directions, all day types).
