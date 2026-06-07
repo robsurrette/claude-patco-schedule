@@ -10,18 +10,24 @@ struct RootTabView: View {
 
         TabView(selection: $appState.tab) {
             ScheduleView()
-                .tabItem { Label(AppTab.schedule.title, systemImage: AppTab.schedule.symbol) }
+                .tabItem { tabLabel(.schedule) }
                 .tag(AppTab.schedule)
             StationMapView()
-                .tabItem { Label(AppTab.stationMap.title, systemImage: AppTab.stationMap.symbol) }
+                .tabItem { tabLabel(.stationMap) }
                 .tag(AppTab.stationMap)
             InfoView()
-                .tabItem { Label(AppTab.info.title, systemImage: AppTab.info.symbol) }
+                .tabItem { tabLabel(.info) }
                 .tag(AppTab.info)
             SettingsView()
-                .tabItem { Label(AppTab.settings.title, systemImage: AppTab.settings.symbol) }
+                .tabItem { tabLabel(.settings) }
                 .tag(AppTab.settings)
         }
+    }
+
+    /// Outlined icon when inactive, filled when this tab is selected.
+    private func tabLabel(_ tab: AppTab) -> some View {
+        let symbol = appState.tab == tab ? tab.symbolFilled : tab.symbol
+        return Label(tab.title, systemImage: symbol)
     }
 }
 
