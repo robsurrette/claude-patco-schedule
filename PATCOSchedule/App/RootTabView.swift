@@ -24,6 +24,10 @@ struct RootTabView: View {
                 .tabItem { Label(AppTab.settings.title, systemImage: AppTab.settings.symbol(selected: appState.tab == .settings)) }
                 .tag(AppTab.settings)
         }
+        // iOS tab bars otherwise force the filled symbol variant on every item.
+        // Disabling automatic variants lets the outlined names render as drawn,
+        // while the explicit `.fill` name we pass for the selected tab stays filled.
+        .environment(\.symbolVariants, .none)
         // Single presenter for `activeSheet`. With a native TabView all tab
         // screens are alive at once, so per-screen `.sheet` modifiers bound to
         // the same state would fight over presentation.
