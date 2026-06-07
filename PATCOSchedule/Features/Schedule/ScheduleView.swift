@@ -63,7 +63,6 @@ struct ScheduleView: View {
             }
             .padding(.horizontal, PTSpacing.screenH)
             .padding(.top, PTSpacing.cardGap)
-            .padding(.bottom, 96)
         }
         .safeAreaInset(edge: .top, spacing: 0) {
             ScheduleHeader()
