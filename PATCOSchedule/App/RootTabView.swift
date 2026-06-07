@@ -12,22 +12,18 @@ struct RootTabView: View {
         // symbol when selected, so the active tab reads as highlighted.
         TabView(selection: $appState.tab) {
             ScheduleView()
-                .tabItem { Label(AppTab.schedule.title, systemImage: AppTab.schedule.symbol(selected: appState.tab == .schedule)) }
+                .tabItem { tabLabel(.schedule) }
                 .tag(AppTab.schedule)
             StationMapView()
-                .tabItem { Label(AppTab.stationMap.title, systemImage: AppTab.stationMap.symbol(selected: appState.tab == .stationMap)) }
+                .tabItem { tabLabel(.stationMap) }
                 .tag(AppTab.stationMap)
             InfoView()
-                .tabItem { Label(AppTab.info.title, systemImage: AppTab.info.symbol(selected: appState.tab == .info)) }
+                .tabItem { tabLabel(.info) }
                 .tag(AppTab.info)
             SettingsView()
-                .tabItem { Label(AppTab.settings.title, systemImage: AppTab.settings.symbol(selected: appState.tab == .settings)) }
+                .tabItem { tabLabel(.settings) }
                 .tag(AppTab.settings)
         }
-        // iOS tab bars otherwise force the filled symbol variant on every item.
-        // Disabling automatic variants lets the outlined names render as drawn,
-        // while the explicit `.fill` name we pass for the selected tab stays filled.
-        .environment(\.symbolVariants, .none)
         // Single presenter for `activeSheet`. With a native TabView all tab
         // screens are alive at once, so per-screen `.sheet` modifiers bound to
         // the same state would fight over presentation.
@@ -42,6 +38,21 @@ struct RootTabView: View {
             default:
                 EmptyView()
             }
+        }
+    }
+
+    /// Builds a tab bar label whose icon is a *pre-rendered* `UIImage` of the
+    /// exact symbol we want. The tab bar normally forces the `.fill` variant on
+    /// every system-named symbol; handing it a concrete template image instead
+    /// stops that re-resolution, so unselected tabs stay outlined and only the
+    /// selected tab — given the explicit `.fill` symbol — renders filled.
+    private func tabLabel(_ tab: AppTab) -> some View {
+        let name = tab.symbol(selected: appState.tab == tab)
+        let image = UIImage(systemName: name)?.withRenderingMode(.alwaysTemplate) ?? UIImage()
+        return Label {
+            Text(tab.title)
+        } icon: {
+            Image(uiImage: image)
         }
     }
 }
