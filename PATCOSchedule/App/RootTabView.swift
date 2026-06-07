@@ -24,6 +24,21 @@ struct RootTabView: View {
                 .tabItem { Label(AppTab.settings.title, systemImage: AppTab.settings.symbol) }
                 .tag(AppTab.settings)
         }
+        // Single presenter for `activeSheet`. With a native TabView all tab
+        // screens are alive at once, so per-screen `.sheet` modifiers bound to
+        // the same state would fight over presentation.
+        .sheet(item: $appState.activeSheet) { sheet in
+            switch sheet {
+            case .stationPicker(let end):
+                StationPickerSheet(end: end)
+            case .tripDetails(let trip):
+                TripDetailsSheet(trip: trip)
+            case .stationInfo(let station):
+                StationInfoSheet(station: station)
+            default:
+                EmptyView()
+            }
+        }
     }
 }
 
