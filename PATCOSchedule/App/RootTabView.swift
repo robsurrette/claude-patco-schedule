@@ -9,18 +9,18 @@ struct RootTabView: View {
         @Bindable var appState = appState
 
         TabView(selection: $appState.tab) {
-            Tab(AppTab.schedule.title, systemImage: AppTab.schedule.symbol, value: AppTab.schedule) {
-                ScheduleView()
-            }
-            Tab(AppTab.stationMap.title, systemImage: AppTab.stationMap.symbol, value: AppTab.stationMap) {
-                StationMapView()
-            }
-            Tab(AppTab.info.title, systemImage: AppTab.info.symbol, value: AppTab.info) {
-                InfoView()
-            }
-            Tab(AppTab.settings.title, systemImage: AppTab.settings.symbol, value: AppTab.settings) {
-                SettingsView()
-            }
+            ScheduleView()
+                .tabItem { Label(AppTab.schedule.title, systemImage: AppTab.schedule.symbol) }
+                .tag(AppTab.schedule)
+            StationMapView()
+                .tabItem { Label(AppTab.stationMap.title, systemImage: AppTab.stationMap.symbol) }
+                .tag(AppTab.stationMap)
+            InfoView()
+                .tabItem { Label(AppTab.info.title, systemImage: AppTab.info.symbol) }
+                .tag(AppTab.info)
+            SettingsView()
+                .tabItem { Label(AppTab.settings.title, systemImage: AppTab.settings.symbol) }
+                .tag(AppTab.settings)
         }
     }
 }
