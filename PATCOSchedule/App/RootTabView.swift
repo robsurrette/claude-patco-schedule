@@ -8,8 +8,7 @@ struct RootTabView: View {
     var body: some View {
         @Bindable var appState = appState
 
-        // Each tab shows its outlined symbol when inactive and its filled
-        // symbol when selected, so the active tab reads as highlighted.
+        // Every tab always uses its outlined symbol.
         TabView(selection: $appState.tab) {
             ScheduleView()
                 .tabItem { tabLabel(.schedule) }
@@ -41,14 +40,10 @@ struct RootTabView: View {
         }
     }
 
-    /// Builds a tab bar label whose icon is a *pre-rendered* `UIImage` of the
-    /// exact symbol we want. The tab bar normally forces the `.fill` variant on
-    /// every system-named symbol; handing it a concrete template image instead
-    /// stops that re-resolution, so unselected tabs stay outlined and only the
-    /// selected tab — given the explicit `.fill` symbol — renders filled.
+    /// Tab bar label using a pre-rendered template image, which keeps the icon
+    /// outlined (the tab bar otherwise forces the filled variant).
     private func tabLabel(_ tab: AppTab) -> some View {
-        let name = tab.symbol(selected: appState.tab == tab)
-        let image = UIImage(systemName: name)?.withRenderingMode(.alwaysTemplate) ?? UIImage()
+        let image = UIImage(systemName: tab.symbol)?.withRenderingMode(.alwaysTemplate) ?? UIImage()
         return Label {
             Text(tab.title)
         } icon: {

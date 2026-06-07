@@ -18,7 +18,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         }
     }
 
-    /// Outlined SF Symbol shown when the tab is not selected.
+    /// Outlined SF Symbol for the tab bar.
     var symbol: String {
         switch self {
         case .schedule:   return "clock"
@@ -26,22 +26,6 @@ enum AppTab: String, CaseIterable, Identifiable {
         case .info:       return "info.circle"
         case .settings:   return "gearshape"
         }
-    }
-
-    /// Filled SF Symbol shown when the tab is the active selection.
-    var filledSymbol: String {
-        switch self {
-        case .schedule:   return "clock.fill"
-        case .stationMap: return "tram.fill"
-        case .info:       return "info.circle.fill"
-        case .settings:   return "gearshape.fill"
-        }
-    }
-
-    /// Returns the filled symbol when this tab is selected, otherwise the
-    /// outlined symbol.
-    func symbol(selected: Bool) -> String {
-        selected ? filledSymbol : symbol
     }
 }
 
