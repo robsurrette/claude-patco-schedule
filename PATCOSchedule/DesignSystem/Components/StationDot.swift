@@ -52,9 +52,9 @@ struct StationRailDot: View {
 }
 
 /// The route selector's origin→destination indicator: a hollow ring (origin)
-/// and a red map-pin (destination) joined by a thin connector. Each endpoint is
-/// centered within its own half of the available height so it lines up with the
-/// center of its corresponding station label row.
+/// and a red map-pin (destination) joined by a thin connector. Each endpoint
+/// occupies a row sized to match a station label row (same font + vertical
+/// padding) so the dots line up with the center of each station label.
 struct RouteEndpointIndicator: View {
     var body: some View {
         VStack(spacing: 0) {
@@ -71,7 +71,6 @@ struct RouteEndpointIndicator: View {
             }
         }
         .frame(width: 14)
-        .frame(maxHeight: .infinity)
     }
 
     private func endpointRow<Content: View>(
@@ -79,14 +78,28 @@ struct RouteEndpointIndicator: View {
         showBottom: Bool,
         @ViewBuilder dot: () -> Content
     ) -> some View {
-        ZStack {
-            VStack(spacing: 0) {
-                connector(visible: showTop)
-                connector(visible: showBottom)
+        // A hidden label sizes the row to exactly one station-button row, so the
+        // dot (centered in the overlay) aligns with that label's center.
+        rowSizer
+            .overlay {
+                ZStack {
+                    VStack(spacing: 0) {
+                        connector(visible: showTop)
+                        connector(visible: showBottom)
+                    }
+                    dot()
+                }
             }
-            dot()
-        }
-        .frame(maxHeight: .infinity)
+    }
+
+    /// Mirrors `RouteSelectorCard`'s station button: `PTFont.rowLabel` text with
+    /// 13pt vertical padding. Kept invisible — used only to establish row height.
+    private var rowSizer: some View {
+        Text(" ")
+            .ptStyle(PTFont.rowLabel)
+            .padding(.vertical, 13)
+            .opacity(0)
+            .accessibilityHidden(true)
     }
 
     private func connector(visible: Bool) -> some View {
