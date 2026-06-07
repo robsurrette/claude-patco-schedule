@@ -18,8 +18,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         }
     }
 
-    /// SF Symbol for the tab bar. The outlined variant is supplied; SwiftUI
-    /// automatically renders the filled variant for the selected tab.
+    /// Outlined SF Symbol for the tab bar.
     var symbol: String {
         switch self {
         case .schedule:   return "clock"
