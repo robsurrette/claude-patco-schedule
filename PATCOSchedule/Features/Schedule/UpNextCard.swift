@@ -70,12 +70,12 @@ struct UpNextCard: View {
     }
 
     private func timeRow(label: String, date: Date) -> some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             Text(label)
                 .font(PTFont.book(12.5))
                 .foregroundStyle(PTColor.ink2)
                 .lineLimit(1)
-                .frame(width: 52, alignment: .leading)
+                .frame(width: 44, alignment: .leading)
             Text(date.formatted(date: .omitted, time: .shortened))
                 .font(PTFont.bold(16))
                 .foregroundStyle(PTColor.ink)

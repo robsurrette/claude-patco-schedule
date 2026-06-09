@@ -159,25 +159,25 @@ struct InfoView: View {
             VStack(spacing: 0) {
                 infoRow(
                     label: "SEPTA",
-                    icon: { monogram("SE", bg: PTColor.Brand.septa) },
+                    icon: { transitLogo("septa") },
                     action: { open("http://www.septa.org/m/") }
                 )
                 Hairline(inset: 61)
                 infoRow(
                     label: "River Line",
-                    icon: { monogram("RL", bg: PTColor.Brand.riverLine) },
+                    icon: { transitLogo("riverline") },
                     action: { open("https://www.njtransit.com/light-rail-to") }
                 )
                 Hairline(inset: 61)
                 infoRow(
                     label: "NJ Transit",
-                    icon: { monogram("NJ", bg: PTColor.Brand.njTransit) },
+                    icon: { transitLogo("njtransit") },
                     action: { open("https://www.njtransit.com") }
                 )
                 Hairline(inset: 61)
                 infoRow(
                     label: "Amtrak",
-                    icon: { monogram("AK", bg: PTColor.Brand.amtrak) },
+                    icon: { transitLogo("amtrak") },
                     action: { open("https://www.amtrak.com") }
                 )
             }
@@ -229,13 +229,14 @@ struct InfoView: View {
             .foregroundStyle(color)
     }
 
-    private func monogram(_ letters: String, bg: Color) -> some View {
-        Text(letters)
-            .font(PTFont.bold(13))
-            .tracking(0.2)
-            .foregroundStyle(.white)
+    /// A connecting-agency logo, sized to the same 32pt slot as the other row
+    /// icons. The asset is a square logo with its own padding (and ships a
+    /// dark-mode variant where needed), so it renders on the card unframed.
+    private func transitLogo(_ name: String) -> some View {
+        Image(name)
+            .resizable()
+            .scaledToFit()
             .frame(width: 32, height: 32)
-            .background(bg, in: RoundedRectangle(cornerRadius: 9, style: .continuous))
     }
 
     // MARK: - Actions
