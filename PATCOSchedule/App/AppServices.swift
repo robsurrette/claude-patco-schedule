@@ -12,7 +12,7 @@ struct AppServices {
 
     static let live = AppServices(
         schedule: BundledScheduleSource(),
-        fares: ZoneFareProvider(),
+        fares: PATCOFareProvider(),
         ads: NoOpAdProvider(),
         feedback: .live
     )
