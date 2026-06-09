@@ -11,8 +11,8 @@ struct Station: Identifiable, Hashable, Codable {
     let index: Int
 
     /// True for the four underground Center-City Philadelphia stations
-    /// (8th & Market eastward). The Station Info amenity set uses a broader
-    /// urban grouping — see `amenities`.
+    /// (8th & Market eastward). Station Info amenities are looked up per
+    /// station rather than by position — see `amenities`.
     var isCenterCity: Bool { index >= 10 }
 }
 
