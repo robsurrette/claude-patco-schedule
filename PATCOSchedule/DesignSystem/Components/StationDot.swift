@@ -74,8 +74,8 @@ struct MapPinShape: Shape {
 
 /// The destination map-pin used in the route selector.
 struct MapPinIcon: View {
-    var width: CGFloat = 13
-    var height: CGFloat = 15
+    var width: CGFloat = 14
+    var height: CGFloat = 14
     var color: Color = PTColor.red
     var holeColor: Color = PTColor.card
 
@@ -118,7 +118,7 @@ struct RouteEndpointIndicator: View {
         .overlay(
             Capsule()
                 .fill(PTColor.hairBold)
-                .frame(width: 2, height: 14)
+                .frame(width: 2, height: 24)
         )
         .frame(width: 14)
     }
