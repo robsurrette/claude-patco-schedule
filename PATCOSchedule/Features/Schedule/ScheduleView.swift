@@ -38,9 +38,10 @@ struct ScheduleView: View {
                     } else {
                         NoTripsCard()
                     }
-                    if appState.alertVisible {
-                        AlertBanner { appState.alertVisible = false }
-                    }
+                    // Temporarily hidden — out of scope for now.
+                    // if appState.alertVisible {
+                    //     AlertBanner { appState.alertVisible = false }
+                    // }
                     if displayTrips.count > 1 {
                         LaterTodayList(
                             trips: Array(displayTrips.dropFirst().prefix(5)),
@@ -101,19 +102,19 @@ private struct ScheduleTitleRow: View {
                 .ptStyle(PTFont.screenTitle)
                 .foregroundStyle(PTColor.ink)
             Spacer(minLength: 8)
-            // Saved button — wired in a later phase
-            HStack(spacing: 6) {
-                Image(systemName: "star.fill")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(PTColor.red)
-                Text("Saved")
-                    .ptStyle(PTFont.rowLabel)
-                    .foregroundStyle(PTColor.ink)
-            }
-            .padding(.horizontal, 13)
-            .padding(.vertical, 8)
-            .background(Capsule().fill(PTColor.card))
-            .ptShadow(.card)
+            // Saved button — temporarily hidden, out of scope for now.
+            // HStack(spacing: 6) {
+            //     Image(systemName: "star.fill")
+            //         .font(.system(size: 12, weight: .semibold))
+            //         .foregroundStyle(PTColor.red)
+            //     Text("Saved")
+            //         .ptStyle(PTFont.rowLabel)
+            //         .foregroundStyle(PTColor.ink)
+            // }
+            // .padding(.horizontal, 13)
+            // .padding(.vertical, 8)
+            // .background(Capsule().fill(PTColor.card))
+            // .ptShadow(.card)
         }
     }
 }
