@@ -81,12 +81,8 @@ enum PTColor {
     /// Alert-banner body text. Light `#8A6420`; lightened for the dark banner.
     static let alertBody = dyn(0x8A6420, 0xE0BC84)
 
-    /// Connecting-transit + accessibility brand colors (logo-like; constant).
+    /// Accessibility + quick-action brand colors (logo-like; constant).
     enum Brand {
-        static let septa = Color(hex: 0x1A6DB4)
-        static let riverLine = Color(hex: 0x3AA5C4)
-        static let njTransit = Color(hex: 0xE07B1A)
-        static let amtrak = Color(hex: 0x1C2C57)
         /// Email quick-action tile.
         static let email = Color(hex: 0x3A6FD8)
         /// X / near-black quick-action tile.
