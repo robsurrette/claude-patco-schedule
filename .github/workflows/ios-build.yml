@@ -25,13 +25,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Xcode 26
-        run: sudo xcode-select -s /Applications/Xcode_26.app
-
       - name: Show toolchain
+        # macos-26 already defaults to Xcode 26, so no explicit xcode-select is
+        # needed. Print the resolved versions for debugging.
         run: |
           xcodebuild -version
-          xcrun simctl list devices available | grep -i "iPhone 16" || true
+          xcrun simctl list devices available | grep -i "iPhone 1" || true
 
       - name: Build for Simulator
         run: |
