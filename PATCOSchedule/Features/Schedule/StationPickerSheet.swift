@@ -34,7 +34,14 @@ struct StationPickerSheet: View {
                     .tracking(-0.3)
                     .foregroundStyle(PTColor.ink)
                 Spacer(minLength: 8)
-                GlassCloseButton(diameter: 38, iconSize: 14) { dismiss() }
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(PTColor.ink2)
+                        .frame(width: 38, height: 38)
+                }
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
             }
             .padding(.horizontal, 20)
             .padding(.top, 10)
