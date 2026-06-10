@@ -38,12 +38,36 @@ struct TripDetailsSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(role: .close) { dismiss() }
+                    closeButton
                 }
             }
         }
         .presentationDetents([.large])
         .presentationCornerRadius(PTRadius.sheet)
+    }
+
+    // MARK: - Close button
+
+    /// iOS 26's native nav-bar close button (`role: .close`) when available;
+    /// a plain circular ✕ on older OSes. The `#if compiler` gate keeps the
+    /// iOS 26-only role invisible to pre-iOS 26 SDKs (e.g. Xcode 16 on CI).
+    @ViewBuilder private var closeButton: some View {
+        #if compiler(>=6.2)
+        if #available(iOS 26.0, *) {
+            Button(role: .close) { dismiss() }
+        } else {
+            legacyCloseButton
+        }
+        #else
+        legacyCloseButton
+        #endif
+    }
+
+    private var legacyCloseButton: some View {
+        Button { dismiss() } label: {
+            Image(systemName: "xmark")
+                .font(.system(size: 16, weight: .semibold))
+        }
     }
 
     // MARK: - Live status
