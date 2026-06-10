@@ -3,10 +3,15 @@ import SwiftUI
 struct ScheduleView: View {
     @Environment(AppState.self) private var appState
     @Environment(ClockTicker.self) private var clock
+    @Environment(SpecialScheduleStore.self) private var specials
     @Environment(\.services) private var services
 
     private var isToday: Bool {
         Calendar.current.isDateInToday(appState.selectedDate)
+    }
+
+    private var activeSpecial: SpecialSchedule? {
+        specials.special(on: appState.selectedDate)
     }
 
     private var displayTrips: [Trip] {
@@ -30,6 +35,9 @@ struct ScheduleView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: PTSpacing.cardGap) {
+                if let special = activeSpecial {
+                    SpecialScheduleBanner(special: special)
+                }
                 if isToday {
                     if let next = displayTrips.first {
                         UpNextCard(trip: next, now: clock.now) {
@@ -38,10 +46,6 @@ struct ScheduleView: View {
                     } else {
                         NoTripsCard()
                     }
-                    // Temporarily hidden — out of scope for now.
-                    // if appState.alertVisible {
-                    //     AlertBanner { appState.alertVisible = false }
-                    // }
                     if displayTrips.count > 1 {
                         LaterTodayList(
                             trips: Array(displayTrips.dropFirst().prefix(5)),
@@ -119,10 +123,20 @@ private struct ScheduleTitleRow: View {
     }
 }
 
-// MARK: - Alert Banner
+// MARK: - Special Schedule Banner
 
-private struct AlertBanner: View {
-    var onClose: () -> Void
+/// Amber banner shown on dates covered by a posted special schedule. When the
+/// feed carries parsed times, the listed trips below already reflect them;
+/// when it's alert-only, the banner directs riders to RidePATCO.org.
+private struct SpecialScheduleBanner: View {
+    let special: SpecialSchedule
+
+    private var detail: String {
+        if let message = special.message, !message.isEmpty { return message }
+        return special.alertOnly
+            ? "Times may differ from the regular schedule. Check RidePATCO.org for details."
+            : "Adjusted times are shown below."
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 11) {
@@ -131,22 +145,14 @@ private struct AlertBanner: View {
                 .foregroundStyle(PTColor.amber)
                 .padding(.top, 1)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Minor delays · Westmont")
+                Text(special.title)
                     .font(PTFont.bold(14))
                     .foregroundStyle(PTColor.alertTitle)
-                Text("The 1:33 is running about 3 min behind.")
+                Text(detail)
                     .font(PTFont.book(13))
                     .foregroundStyle(PTColor.alertBody)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(PTColor.amber)
-                    .padding(6)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
@@ -181,5 +187,6 @@ private struct NoTripsCard: View {
     ScheduleView()
         .environment(AppState())
         .environment(ClockTicker(virtualNow: .now))
+        .environment(SpecialScheduleStore())
         .environment(\.services, .live)
 }

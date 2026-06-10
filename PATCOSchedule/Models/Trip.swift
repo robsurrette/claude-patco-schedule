@@ -26,6 +26,9 @@ struct Trip: Identifiable, Equatable {
     /// Scheduled arrival at `dest`.
     let arrive: Date
     var status: TripStatus = .onTime
+    /// True when this trip's times come from a special schedule and differ
+    /// from the regular timetable (drives the "Adjusted" highlight).
+    var isAdjusted: Bool = false
 
     /// Effective departure including any delay.
     var effectiveDepart: Date {

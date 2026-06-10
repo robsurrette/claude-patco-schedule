@@ -18,6 +18,9 @@ struct UpNextCard: View {
                 Text("UP NEXT")
                     .ptStyle(PTFont.overline)
                     .foregroundStyle(PTColor.ink2)
+                if trip.isAdjusted {
+                    AdjustedTag()
+                }
             }
 
             HStack(alignment: .center, spacing: 0) {

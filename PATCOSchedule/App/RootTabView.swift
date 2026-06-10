@@ -58,4 +58,5 @@ struct RootTabView: View {
         .environment(PremiumStore())
         .environment(FavoritesStore())
         .environment(ClockTicker(virtualNow: .now))
+        .environment(SpecialScheduleStore())
 }

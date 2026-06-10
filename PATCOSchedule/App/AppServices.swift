@@ -16,6 +16,16 @@ struct AppServices {
         ads: NoOpAdProvider(),
         feedback: .live
     )
+
+    /// Live services with special-schedule overlays: on dates covered by a
+    /// parsed special schedule, trips come from the store's feed instead of
+    /// the bundled timetable.
+    static func live(specials: SpecialScheduleStore) -> AppServices {
+        var services = live
+        services.schedule = OverlayScheduleSource(
+            base: BundledScheduleSource(), specials: specials)
+        return services
+    }
 }
 
 private struct AppServicesKey: EnvironmentKey {

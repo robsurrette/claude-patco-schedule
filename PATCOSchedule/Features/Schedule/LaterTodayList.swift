@@ -67,6 +67,9 @@ private struct LaterTodayRow: View {
                     Text(trip.arrive.formatted(date: .omitted, time: .shortened))
                         .ptStyle(PTFont.tripTime)
                         .foregroundStyle(PTColor.ink)
+                    if trip.isAdjusted {
+                        AdjustedTag()
+                    }
                 }
                 if showCountdown {
                     Text(countdownText)

@@ -1,9 +1,8 @@
 import Foundation
 
-/// Source of timetable data. The MVP ships `BundledScheduleSource`; a future
-/// `RemoteScheduleSource` (twice-a-year refresh) conforms to the same protocol
-/// and uses the identical `ScheduleDocument` schema, so swapping it in requires
-/// no changes to callers.
+/// Source of timetable data. `BundledScheduleSource` serves the timetable
+/// shipped in the app; `OverlayScheduleSource` wraps it and substitutes a
+/// special schedule (from `SpecialScheduleStore`) on dates that have one.
 protocol ScheduleProvider {
     /// The loaded timetable document.
     var document: ScheduleDocument { get }
@@ -17,6 +16,39 @@ extension ScheduleProvider {
     func upcomingTrips(origin: Station, dest: Station, date: Date, now: Date, calendar: Calendar = .current) -> [Trip] {
         trips(origin: origin, dest: dest, date: date, calendar: calendar)
             .filter { $0.effectiveDepart > now }
+    }
+}
+
+/// Shared timetable→trips resolution, used for both the bundled document and
+/// special-schedule overlays (which carry the same `[ServiceSchedule]` shape).
+enum ScheduleResolver {
+    static func trips(
+        in services: [ServiceSchedule],
+        origin: Station, dest: Station, date: Date, calendar: Calendar
+    ) -> [Trip] {
+        guard origin != dest else { return [] }
+
+        let direction = Direction.between(origin: origin, dest: dest)
+        let dayType = DayType.forDate(date, calendar: calendar)
+
+        guard let service = services.first(where: {
+            $0.direction == direction && $0.dayType == dayType
+        }) else { return [] }
+
+        let midnight = calendar.startOfDay(for: date)
+
+        return service.trains.compactMap { run -> Trip? in
+            guard
+                let originStop = run.stops.first(where: { $0.stationId == origin.id }),
+                let destStop = run.stops.first(where: { $0.stationId == dest.id }),
+                destStop.minutes > originStop.minutes
+            else { return nil }
+
+            let depart = midnight.addingTimeInterval(TimeInterval(originStop.minutes * 60))
+            let arrive = midnight.addingTimeInterval(TimeInterval(destStop.minutes * 60))
+            return Trip(id: run.id, origin: origin, dest: dest, depart: depart, arrive: arrive)
+        }
+        .sorted { $0.depart < $1.depart }
     }
 }
 
@@ -41,28 +73,45 @@ struct BundledScheduleSource: ScheduleProvider {
     }
 
     func trips(origin: Station, dest: Station, date: Date, calendar: Calendar) -> [Trip] {
-        guard origin != dest else { return [] }
+        ScheduleResolver.trips(
+            in: document.services,
+            origin: origin, dest: dest, date: date, calendar: calendar
+        )
+    }
+}
 
-        let direction = Direction.between(origin: origin, dest: dest)
-        let dayType = DayType.forDate(date, calendar: calendar)
+/// Overlays special schedules on a baseline provider: on a date covered by a
+/// parsed special schedule, trips come from that timetable instead, with runs
+/// whose times differ from the regular timetable flagged `isAdjusted`.
+/// Alert-only specials (no parsed times) fall through to the baseline.
+struct OverlayScheduleSource: ScheduleProvider {
+    let base: ScheduleProvider
+    let specials: SpecialScheduleStore
 
-        guard let service = document.services.first(where: {
-            $0.direction == direction && $0.dayType == dayType
-        }) else { return [] }
+    var document: ScheduleDocument { base.document }
 
-        let midnight = calendar.startOfDay(for: date)
-
-        return service.trains.compactMap { run -> Trip? in
-            guard
-                let originStop = run.stops.first(where: { $0.stationId == origin.id }),
-                let destStop = run.stops.first(where: { $0.stationId == dest.id }),
-                destStop.minutes > originStop.minutes
-            else { return nil }
-
-            let depart = midnight.addingTimeInterval(TimeInterval(originStop.minutes * 60))
-            let arrive = midnight.addingTimeInterval(TimeInterval(destStop.minutes * 60))
-            return Trip(id: run.id, origin: origin, dest: dest, depart: depart, arrive: arrive)
+    func trips(origin: Station, dest: Station, date: Date, calendar: Calendar) -> [Trip] {
+        let baseline = {
+            base.trips(origin: origin, dest: dest, date: date, calendar: calendar)
         }
-        .sorted { $0.depart < $1.depart }
+        guard let services = specials.special(on: date)?.services else {
+            return baseline()
+        }
+
+        var trips = ScheduleResolver.trips(
+            in: services,
+            origin: origin, dest: dest, date: date, calendar: calendar
+        )
+        let regular = Set(baseline().map { TimePair(depart: $0.depart, arrive: $0.arrive) })
+        for i in trips.indices {
+            trips[i].isAdjusted = !regular.contains(
+                TimePair(depart: trips[i].depart, arrive: trips[i].arrive))
+        }
+        return trips
+    }
+
+    private struct TimePair: Hashable {
+        let depart: Date
+        let arrive: Date
     }
 }
