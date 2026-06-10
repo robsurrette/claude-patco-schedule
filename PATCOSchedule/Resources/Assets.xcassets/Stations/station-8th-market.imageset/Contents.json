@@ -1,8 +1,8 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
-      "filename" : "station-8th-market.jpeg"
+      "filename" : "station-8th-market.jpeg",
+      "idiom" : "universal"
     }
   ],
   "info" : {
