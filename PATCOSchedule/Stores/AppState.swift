@@ -19,7 +19,18 @@ final class AppState {
     var destination: Station
 
     // Date being viewed
-    var selectedDate: Date
+    var selectedDate: Date {
+        didSet {
+            // Track whether the user is parked on "today" so we can re-anchor to
+            // the new current day after the app has been backgrounded across
+            // midnight. Any manual navigation to another day clears the pin.
+            pinnedToToday = Calendar.current.isDateInToday(selectedDate)
+        }
+    }
+
+    /// Whether `selectedDate` is following the current day. True while the user
+    /// is viewing "Today"; cleared once they navigate to a different day.
+    private(set) var pinnedToToday: Bool = true
 
     // Navigation / presentation
     var tab: AppTab = .schedule
@@ -53,6 +64,7 @@ final class AppState {
         self.origin = origin
         self.destination = destination
         self.selectedDate = selectedDate
+        self.pinnedToToday = Calendar.current.isDateInToday(selectedDate)
 
         // Restore the saved appearance preference (defaults to .automatic).
         if let raw = defaults.string(forKey: Self.themeKey),
@@ -127,5 +139,14 @@ final class AppState {
         if let next = calendar.date(byAdding: .day, value: days, to: selectedDate) {
             selectedDate = next
         }
+    }
+
+    /// Re-anchor the viewed date to the current day when the app returns to the
+    /// foreground. If the user was viewing "Today" but the wall clock has since
+    /// rolled into a new day, advance `selectedDate` so they see today's
+    /// schedule rather than yesterday's. No-op if they've navigated elsewhere.
+    func refreshSelectedDateForForeground(now: Date = .now, calendar: Calendar = .current) {
+        guard pinnedToToday, !calendar.isDateInToday(selectedDate) else { return }
+        selectedDate = now
     }
 }
