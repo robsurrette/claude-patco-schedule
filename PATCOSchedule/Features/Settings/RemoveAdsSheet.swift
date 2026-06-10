@@ -64,14 +64,24 @@ struct RemoveAdsSheet: View {
     private var closeBar: some View {
         HStack {
             Spacer()
-            Button { dismiss() } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(PTColor.ink2)
-                    .frame(width: 36, height: 36)
+            if #available(iOS 26.0, *) {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(PTColor.ink2)
+                        .frame(width: 28, height: 28)
+                }
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+            } else {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(PTColor.ink2)
+                        .frame(width: 28, height: 28)
+                }
+                .buttonBorderShape(.circle)
             }
-            .buttonStyle(.glass)
-            .buttonBorderShape(.circle)
         }
         .padding(.horizontal, 14)
         .padding(.top, 8)

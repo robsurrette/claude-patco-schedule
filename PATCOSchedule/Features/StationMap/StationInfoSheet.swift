@@ -102,14 +102,26 @@ struct StationInfoSheet: View {
     }
 
     private var closeButton: some View {
-        Button { dismiss() } label: {
-            Image(systemName: "xmark")
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(PTColor.ink)
-                .frame(width: 36, height: 36)
+        Group {
+            if #available(iOS 26.0, *) {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(PTColor.ink2)
+                        .frame(width: 28, height: 28)
+                }
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+            } else {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(PTColor.ink2)
+                        .frame(width: 28, height: 28)
+                }
+                .buttonBorderShape(.circle)
+            }
         }
-        .buttonStyle(.glass)
-        .buttonBorderShape(.circle)
     }
 
     // MARK: - Directions
