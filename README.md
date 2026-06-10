@@ -24,7 +24,9 @@ tab by tab.
   observable state (`AppState`,
   `FavoritesStore`, `PremiumStore`, `ClockTicker`).
 - Model layer + the bundled-/remote-shared schedule schema, with
-  `MockSchedule.json` (full-day service, both directions, all day types).
+  `Schedule.json` — the real PATCO timetable (effective 12/1/2025), generated
+  from the official PDF by `tools/parse_timetable.py` (all day types, both
+  directions, including skip-stop "station closed" runs).
 - Service seams: `ScheduleProvider` (bundled now, remote-refresh later),
   `FareProvider` (zone-based), `AdProvider` (no-op now, AdMob later),
   StoreKit 2 in `PremiumStore`.
@@ -37,9 +39,11 @@ tab by tab.
 Open `PATCOSchedule.xcodeproj` and run on an iPhone simulator.
 
 ## Things to wire before shipping (TODOs)
-- **Schedule data** — `MockSchedule.json` is placeholder times. Replace with the
-  real PATCO timetable (same schema). The remote twice-a-year refresh
-  (`RemoteScheduleSource`) is a post-MVP seam already accounted for.
+- **Schedule refresh** — bundled `Schedule.json` is the real 12/1/2025
+  timetable. When PATCO publishes a new effective timetable, regenerate with
+  `python3 tools/parse_timetable.py --pdf <new.pdf> --version <YYYYMMDD>`.
+  The remote refresh + daily special-schedule overlay (`RemoteScheduleSource`)
+  is a post-MVP seam already accounted for.
 - **Fares** — `ZoneFareProvider` uses placeholder zoning/prices. Drop in PATCO's
   official fare matrix.
 - **StoreKit** — set `PremiumStore.removeAdsProductID` to the live App Store
@@ -61,5 +65,8 @@ PATCOSchedule/
 ├─ Stores/         AppState, FavoritesStore, PremiumStore (@Observable)
 ├─ Services/       ScheduleProvider, FareProvider, ClockTicker, AdProvider
 ├─ Features/       Schedule / StationMap / Info / Settings (placeholders)
-└─ Resources/      Fonts, Assets.xcassets, MockSchedule.json
+└─ Resources/      Fonts, Assets.xcassets, Schedule.json
+tools/
+├─ parse_timetable.py   official PDF → Schedule.json converter (validating)
+└─ data/                source timetable PDFs
 ```

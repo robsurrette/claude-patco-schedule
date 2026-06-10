@@ -37,7 +37,7 @@ enum DayType: String, Codable, CaseIterable {
 // against the rider's selected date. Keep this schema stable & versioned so a
 // newer remote document can be validated and swapped in without code changes.
 
-/// Root document loaded from `MockSchedule.json` (and later from the network).
+/// Root document loaded from `Schedule.json` (and later from the network).
 struct ScheduleDocument: Codable {
     /// Monotonic schema/content version. The remote refresh only replaces the
     /// bundled document when `version` is greater than what's stored.

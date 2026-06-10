@@ -20,13 +20,14 @@ extension ScheduleProvider {
     }
 }
 
-/// Loads the timetable bundled in the app (`MockSchedule.json` for now).
+/// Loads the timetable bundled in the app (`Schedule.json`, generated from
+/// the official PATCO timetable PDF by `tools/parse_timetable.py`).
 struct BundledScheduleSource: ScheduleProvider {
     let document: ScheduleDocument
 
     /// Load from the app bundle. Fails loudly in DEBUG if the resource is
     /// missing or malformed so data problems surface immediately.
-    init(resource: String = "MockSchedule", bundle: Bundle = .main) {
+    init(resource: String = "Schedule", bundle: Bundle = .main) {
         guard
             let url = bundle.url(forResource: resource, withExtension: "json"),
             let data = try? Data(contentsOf: url),
