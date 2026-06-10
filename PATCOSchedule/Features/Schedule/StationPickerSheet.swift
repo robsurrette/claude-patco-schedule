@@ -34,6 +34,7 @@ struct StationPickerSheet: View {
                     .tracking(-0.3)
                     .foregroundStyle(PTColor.ink)
                 Spacer(minLength: 8)
+                #if compiler(>=6.2)
                 if #available(iOS 26.0, *) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
@@ -52,6 +53,15 @@ struct StationPickerSheet: View {
                     }
                     .buttonBorderShape(.circle)
                 }
+                #else
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(PTColor.ink2)
+                        .frame(width: 28, height: 28)
+                }
+                .buttonBorderShape(.circle)
+                #endif
             }
             .padding(.horizontal, 20)
             .padding(.top, 10)
