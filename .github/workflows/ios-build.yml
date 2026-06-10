@@ -20,7 +20,7 @@ jobs:
     env:
       SCHEME: PATCOSchedule
       PROJECT: PATCOSchedule.xcodeproj
-      SIMULATOR: iPhone 16
+      SIMULATOR: iPhone 17
 
     steps:
       - uses: actions/checkout@v4
