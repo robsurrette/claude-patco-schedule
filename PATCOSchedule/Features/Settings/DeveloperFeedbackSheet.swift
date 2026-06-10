@@ -56,14 +56,7 @@ struct DeveloperFeedbackSheet: View {
                 .tracking(-0.3)
                 .foregroundStyle(PTColor.ink)
             Spacer(minLength: 8)
-            Button { dismiss() } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(PTColor.ink2)
-                    .frame(width: 38, height: 38)
-                    .background(Circle().fill(PTColor.fill2))
-            }
-            .buttonStyle(.plain)
+            GlassCloseButton { dismiss() }
         }
         .padding(.horizontal, 20)
         .padding(.top, 10)

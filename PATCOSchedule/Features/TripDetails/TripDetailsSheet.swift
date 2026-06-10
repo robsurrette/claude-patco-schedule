@@ -28,15 +28,7 @@ struct TripDetailsSheet: View {
                     .tracking(-0.3)
                     .foregroundStyle(PTColor.ink)
                 Spacer()
-                Button { dismiss() } label: {
-                    Text("×")
-                        .font(.system(size: 22, weight: .regular))
-                        .foregroundStyle(PTColor.ink2)
-                        .frame(width: 38, height: 38)
-                        .background(PTColor.fill2)
-                        .clipShape(Circle())
-                }
-                .buttonStyle(.plain)
+                GlassCloseButton { dismiss() }
             }
             .padding(.top, 10)
             .padding(.bottom, 12)
