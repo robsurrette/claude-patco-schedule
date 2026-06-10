@@ -49,18 +49,13 @@ struct TripDetailsSheet: View {
     // MARK: - Close button
 
     /// iOS 26's native nav-bar close button (`role: .close`) when available;
-    /// a plain circular ✕ on older OSes. The `#if compiler` gate keeps the
-    /// iOS 26-only role invisible to pre-iOS 26 SDKs (e.g. Xcode 16 on CI).
+    /// a plain circular ✕ on the iOS 17–25 deployment range.
     @ViewBuilder private var closeButton: some View {
-        #if compiler(>=6.2)
         if #available(iOS 26.0, *) {
             Button(role: .close) { dismiss() }
         } else {
             legacyCloseButton
         }
-        #else
-        legacyCloseButton
-        #endif
     }
 
     private var legacyCloseButton: some View {

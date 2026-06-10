@@ -13,9 +13,10 @@ concurrency:
 jobs:
   build:
     name: Build (iOS Simulator)
-    # macos-15 ships Xcode 16, required for this project's objectVersion 77
-    # (file-system synchronized groups).
-    runs-on: macos-15
+    # macos-26 ships Xcode 26 (iOS 26 SDK / Swift 6.2), needed so iOS 26-only
+    # APIs (e.g. Button(role: .close), .buttonStyle(.glass)) compile without a
+    # #if compiler(>=6.2) gate. Xcode 26 still supports objectVersion 77.
+    runs-on: macos-26
     env:
       SCHEME: PATCOSchedule
       PROJECT: PATCOSchedule.xcodeproj
@@ -23,6 +24,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Select Xcode 26
+        run: sudo xcode-select -s /Applications/Xcode_26.app
 
       - name: Show toolchain
         run: |
