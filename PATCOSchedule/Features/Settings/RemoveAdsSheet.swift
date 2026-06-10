@@ -64,14 +64,7 @@ struct RemoveAdsSheet: View {
     private var closeBar: some View {
         HStack {
             Spacer()
-            Button { dismiss() } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(PTColor.ink2)
-                    .frame(width: 36, height: 36)
-                    .background(Circle().fill(PTColor.fill2))
-            }
-            .buttonStyle(.plain)
+            GlassCloseButton { dismiss() }
         }
         .padding(.horizontal, 14)
         .padding(.top, 8)

@@ -102,15 +102,11 @@ struct StationInfoSheet: View {
     }
 
     private var closeButton: some View {
-        Button { dismiss() } label: {
-            Image(systemName: "xmark")
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(PTColor.ink)
-                .frame(width: 36, height: 36)
-                .background(.ultraThinMaterial, in: Circle())
-                .shadow(color: .black.opacity(0.12), radius: 4, x: 0, y: 2)
-        }
-        .buttonStyle(.plain)
+        GlassCloseButton(
+            iconWeight: .semibold,
+            iconColor: PTColor.ink,
+            floatsOverContent: true
+        ) { dismiss() }
     }
 
     // MARK: - Directions
