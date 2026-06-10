@@ -28,15 +28,24 @@ struct TripDetailsSheet: View {
                     .tracking(-0.3)
                     .foregroundStyle(PTColor.ink)
                 Spacer()
-                Button { dismiss() } label: {
-                    Text("×")
-                        .font(.system(size: 22, weight: .regular))
-                        .foregroundStyle(PTColor.ink2)
-                        .frame(width: 38, height: 38)
-                        .background(PTColor.fill2)
-                        .clipShape(Circle())
+                if #available(iOS 26.0, *) {
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundStyle(PTColor.ink2)
+                            .frame(width: 28, height: 28)
+                    }
+                    .buttonStyle(.glass)
+                    .buttonBorderShape(.circle)
+                } else {
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundStyle(PTColor.ink2)
+                            .frame(width: 28, height: 28)
+                    }
+                    .buttonBorderShape(.circle)
                 }
-                .buttonStyle(.plain)
             }
             .padding(.top, 10)
             .padding(.bottom, 12)

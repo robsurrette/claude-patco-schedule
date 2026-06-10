@@ -56,14 +56,24 @@ struct DeveloperFeedbackSheet: View {
                 .tracking(-0.3)
                 .foregroundStyle(PTColor.ink)
             Spacer(minLength: 8)
-            Button { dismiss() } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(PTColor.ink2)
-                    .frame(width: 38, height: 38)
-                    .background(Circle().fill(PTColor.fill2))
+            if #available(iOS 26.0, *) {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(PTColor.ink2)
+                        .frame(width: 28, height: 28)
+                }
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+            } else {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(PTColor.ink2)
+                        .frame(width: 28, height: 28)
+                }
+                .buttonBorderShape(.circle)
             }
-            .buttonStyle(.plain)
         }
         .padding(.horizontal, 20)
         .padding(.top, 10)
