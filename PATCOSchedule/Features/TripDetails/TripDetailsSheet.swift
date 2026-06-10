@@ -20,7 +20,21 @@ struct TripDetailsSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
+        VStack(spacing: 0) {
+            // Header (non-scrollable)
+            HStack {
+                Text("Trip details")
+                    .font(PTFont.bold(23))
+                    .tracking(-0.3)
+                    .foregroundStyle(PTColor.ink)
+                Spacer()
+                GlassCloseButton { dismiss() }
+            }
+            .padding(.top, 10)
+            .padding(.bottom, 12)
+            .padding(.leading, 20)
+            .padding(.trailing, 16)
+
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     liveStatus.padding(.bottom, 12)
@@ -30,39 +44,13 @@ struct TripDetailsSheet: View {
                     stopsList
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 4)
                 .padding(.bottom, 28)
             }
-            .background(PTColor.bg)
-            .navigationTitle("Trip details")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    closeButton
-                }
-            }
         }
+        .background(PTColor.bg)
         .presentationDetents([.large])
+        .presentationDragIndicator(.visible)
         .presentationCornerRadius(PTRadius.sheet)
-    }
-
-    // MARK: - Close button
-
-    /// iOS 26's native nav-bar close button (`role: .close`) when available;
-    /// a plain circular ✕ on the iOS 17–25 deployment range.
-    @ViewBuilder private var closeButton: some View {
-        if #available(iOS 26.0, *) {
-            Button(role: .close) { dismiss() }
-        } else {
-            legacyCloseButton
-        }
-    }
-
-    private var legacyCloseButton: some View {
-        Button { dismiss() } label: {
-            Image(systemName: "xmark")
-                .font(.system(size: 16, weight: .semibold))
-        }
     }
 
     // MARK: - Live status
