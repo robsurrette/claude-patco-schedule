@@ -20,21 +20,7 @@ struct TripDetailsSheet: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Header (non-scrollable)
-            HStack {
-                Text("Trip details")
-                    .font(PTFont.bold(23))
-                    .tracking(-0.3)
-                    .foregroundStyle(PTColor.ink)
-                Spacer()
-                GlassCloseButton { dismiss() }
-            }
-            .padding(.top, 10)
-            .padding(.bottom, 12)
-            .padding(.leading, 20)
-            .padding(.trailing, 16)
-
+        NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     liveStatus.padding(.bottom, 12)
@@ -44,12 +30,19 @@ struct TripDetailsSheet: View {
                     stopsList
                 }
                 .padding(.horizontal, 16)
+                .padding(.top, 4)
                 .padding(.bottom, 28)
             }
+            .background(PTColor.bg)
+            .navigationTitle("Trip details")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(role: .close) { dismiss() }
+                }
+            }
         }
-        .background(PTColor.bg)
         .presentationDetents([.large])
-        .presentationDragIndicator(.visible)
         .presentationCornerRadius(PTRadius.sheet)
     }
 
